@@ -10,6 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons-wind.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200" />
     <link href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700;800&display=swap" rel="stylesheet">
+	<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7JY8FER21L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7JY8FER21L');
+</script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -130,24 +139,28 @@
         
         /* SVG Icon Utilities */
         .icon-svg { fill: currentColor; width: 1em; height: 1em; display: inline-block; vertical-align: middle; }
+    
+        /* Prevent horizontal scroll in References section */
+        .refs-wrap a, .refs-wrap code { overflow-wrap:anywhere; word-break:break-word; }
+
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-[#E5E1DA] px-4 md:px-12 py-4 z-50 shadow-sm">
-        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3 group cursor-default">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+            <a href="index.html" class="flex items-center gap-3 group cursor-pointer hover:opacity-90 transition-opacity" aria-label="スタジオに戻る（トップ）">
                 <div class="w-10 h-10 bg-kodai-murasaki rounded-lg flex items-center justify-center text-white shadow-md">
                     <!-- Material Symbols "partly_cloudy_day" -->
                     <span class="material-symbols-outlined !text-2xl notranslate">partly_cloudy_day</span>
                 </div>
                 <div>
-                    <h1 class="text-heading-16pt text-kodai-murasaki leading-none">Weather Icons Studio</h1>
-                    <p class="text-min-12pt font-bold text-text-gray uppercase tracking-[0.2em] mt-1 opacity-70 text-nowrap">Design by しんやせっけいしゃ / MECA</p>
+                    <h1 class="text-[18px] sm:text-heading-16pt text-kodai-murasaki leading-tight break-words">Weather Icons Studio</h1>
+                    <p class="text-[11px] sm:text-min-12pt font-bold text-text-gray uppercase tracking-[0.16em] sm:tracking-[0.2em] mt-1 opacity-70 leading-tight">Design by しんやせっけいしゃ / MECA</p>
                 </div>
-            </div>
-            <a href="index.html" class="text-min-12pt font-bold text-text-gray hover:text-accent-terracotta transition-colors flex items-center gap-2">
+            </a>
+            <a href="index.html" class="text-min-12pt font-bold text-text-gray hover:text-accent-terracotta transition-colors flex items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <span class="material-symbols-outlined !text-lg notranslate">arrow_back</span>
                 スタジオに戻る
             </a>
@@ -248,7 +261,7 @@
                     </div>
 
                     <!-- 10s Place (Accordion) -->
-                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                    <details class="accordion group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
                         <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
                             <span class="flex items-center gap-2"><span class="marker-accent">2. 変化のタイミング（十の位）の完全解読</span></span>
                             <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
@@ -280,7 +293,7 @@
                     </details>
 
                     <!-- 1s Place (Accordion) -->
-                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                    <details class="accordion group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
                         <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
                             <span class="flex items-center gap-2"><span class="marker-accent">3. 変化の魔法（一の位）の完全解読</span></span>
                             <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
@@ -316,7 +329,7 @@
                 </h3>
                 <div class="space-y-4">
                     <!-- Wind Column (Revised) -->
-                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                    <details class="accordion group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
                         <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-kodai-murasaki !text-xl notranslate">explore</span>
@@ -490,25 +503,279 @@
                     </details>
 
                     <!-- Moon Column -->
-                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                    <details class="accordion group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
                         <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
                             <span class="flex items-center gap-2">
                                 <span class="material-symbols-outlined text-kodai-murasaki !text-xl notranslate">dark_mode</span>
-                                月齢アイコン：28段階の精密なサイクル
+                                月齢アイコン：28段階の精密なサイクル（異名つき）
                             </span>
                             <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
                         </summary>
-                        <div class="mt-6 text-sm text-text-gray space-y-4 leading-relaxed font-bold text-nowrap overflow-x-auto">
+
+                        <div class="mt-6 text-sm text-text-gray space-y-4 leading-relaxed font-bold break-words">
                             <p>
-                                Weather Iconsには <code>new</code>（新月）から <code>full</code>（満月）まで、計28段階のアイコンが用意されています。
+                                Weather Icons の月齢は、<code>new</code>（新月）→ <code>full</code>（満月）→ <code>waning-crescent</code>（欠けていく月）までを
+                                <span class="marker-accent text-text-dark">計28段階</span>で表現できます。ここでは、各段階に日本の「月の異名」を割り当てて一覧化しています。
                             </p>
-                            <div class="flex flex-wrap gap-4 text-3xl text-kodai-murasaki bg-slate-900 p-6 rounded-lg justify-center border border-slate-800 shadow-inner">
-                                <i class="wi wi-moon-alt-new text-white/40" title="New Moon"></i>
-                                <i class="wi wi-moon-alt-waxing-crescent-3 text-white/60" title="Waxing Crescent"></i>
-                                <i class="wi wi-moon-alt-first-quarter text-white/80" title="First Quarter"></i>
-                                <i class="wi wi-moon-alt-waxing-gibbous-3 text-white" title="Waxing Gibbous"></i>
-                                <i class="wi wi-moon-alt-full text-white shadow-[0_0_15px_rgba(255,255,255,0.4)]" title="Full Moon"></i>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs items-stretch">
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-new" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">一日月</div>
+                                <div class="text-white/70 font-bold leading-tight">新月（朔）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-new</div>
                             </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-crescent-1" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-crescent-1</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-crescent-2" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">三日月</div>
+                                <div class="text-white/70 font-bold leading-tight">三日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-crescent-2</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-crescent-3" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">四日月</div>
+                                <div class="text-white/70 font-bold leading-tight">四日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-crescent-3</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-crescent-4" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">五日月</div>
+                                <div class="text-white/70 font-bold leading-tight">五日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-crescent-4</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-crescent-5" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">六日月</div>
+                                <div class="text-white/70 font-bold leading-tight">六日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-crescent-5</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-crescent-6" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">七日月</div>
+                                <div class="text-white/70 font-bold leading-tight">七日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-crescent-6</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-first-quarter" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">八日月</div>
+                                <div class="text-white/70 font-bold leading-tight">上弦の月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-first-quarter</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-gibbous-1" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">九夜月</div>
+                                <div class="text-white/70 font-bold leading-tight">九夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-gibbous-1</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-gibbous-2" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十日月</div>
+                                <div class="text-white/70 font-bold leading-tight">十日夜の月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-gibbous-2</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-gibbous-3" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十一日月</div>
+                                <div class="text-white/70 font-bold leading-tight">十一夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-gibbous-3</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-gibbous-4" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十二日月</div>
+                                <div class="text-white/70 font-bold leading-tight">十二夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-gibbous-4</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-gibbous-5" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十三日月</div>
+                                <div class="text-white/70 font-bold leading-tight">十三夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-gibbous-5</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waxing-gibbous-6" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十四日月</div>
+                                <div class="text-white/70 font-bold leading-tight">小望月（こもちづき）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waxing-gibbous-6</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-full" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十五日月</div>
+                                <div class="text-white/70 font-bold leading-tight">満月（望月 / 十五夜）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-full</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-gibbous-1" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十六日月</div>
+                                <div class="text-white/70 font-bold leading-tight">十六夜（いざよい）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-gibbous-1</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-gibbous-2" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十七日月</div>
+                                <div class="text-white/70 font-bold leading-tight">立待月（たちまちづき）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-gibbous-2</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-gibbous-3" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十八日月</div>
+                                <div class="text-white/70 font-bold leading-tight">居待月（いまちづき）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-gibbous-3</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-gibbous-4" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">十九日月</div>
+                                <div class="text-white/70 font-bold leading-tight">寝待月（ねまちづき）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-gibbous-4</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-gibbous-5" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十日月</div>
+                                <div class="text-white/70 font-bold leading-tight">更待月（ふけまちづき）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-gibbous-5</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-gibbous-6" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十一日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二十一夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-gibbous-6</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-third-quarter" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十二日月</div>
+                                <div class="text-white/70 font-bold leading-tight">下弦の月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-third-quarter</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-crescent-1" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十三日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二十三夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-crescent-1</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-crescent-2" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十四日月</div>
+                                <div class="text-white/70 font-bold leading-tight">有明月（ありあけづき）</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-crescent-2</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-crescent-3" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十五日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二十五日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-crescent-3</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-crescent-4" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十六日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二十六夜月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-crescent-4</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-crescent-5" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十七日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二十七日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-crescent-5</div>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
+                                <div class="text-3xl text-white">
+                                    <i class="wi wi-moon-alt-waning-crescent-6" aria-hidden="true"></i>
+                                </div>
+                                <div class="text-white/90 font-black leading-tight text-nowrap">二十八日月</div>
+                                <div class="text-white/70 font-bold leading-tight">二十八日月</div>
+                                <div class="text-white/50 font-mono text-[11px] break-all">wi-waning-crescent-6</div>
+                            </div>
+                            </div>
+
+                            <p class="text-[11px] text-text-gray/80 leading-relaxed">
+                                ※「異名」は一般的な呼称を基準に、28段階へ当てはめています（地域・時代で揺れがあるため、厳密な暦注ではなく“UI用途の目安”として扱ってください）。
+                            </p>
                         </div>
                     </details>
                 </div>
@@ -565,23 +832,23 @@
                 </h3>
                 <div class="text-base text-text-gray space-y-6 leading-relaxed">
                     <p>ダークモードや夜間表示では、背景色（黒系）に馴染みつつ、情報の可読性を保つ配色が求められます。スタジオの「夜間用」プリセットは以下の設計に基づきます。</p>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs items-stretch">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
                             <div class="h-10 rounded bg-[#FFFDE7] w-full shadow-sm"></div>
                             <p class="font-bold text-white">快晴 (月明かり / #FFFDE7)</p>
                             <p class="text-slate-400">暗闇で最も目に優しいクリーム色。</p>
                         </div>
-                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
                             <div class="h-10 rounded bg-[#E0E7FF] w-full shadow-sm"></div>
                             <p class="font-bold text-white">曇り (星空 / #E0E7FF)</p>
                             <p class="text-slate-400">穏やかな夜空を感じさせる薄い青。</p>
                         </div>
-                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
                             <div class="h-10 rounded bg-[#C7D2FE] w-full shadow-sm"></div>
                             <p class="font-bold text-white">雨 (静寂 / #C7D2FE)</p>
                             <p class="text-slate-400">しっとりした夜を想起させるインディゴ。</p>
                         </div>
-                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-800 text-center space-y-2 min-w-0">
                             <div class="h-10 rounded bg-[#FFFFFF] w-full shadow-sm"></div>
                             <p class="font-bold text-white">雪 (ホワイト / #FFFFFF)</p>
                             <p class="text-slate-400">鮮明なコントラストを保つ基本白。</p>
@@ -637,7 +904,7 @@
                 <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
                     <span class="material-symbols-outlined !text-2xl notranslate">history_edu</span> 出典・参考文献・ライセンス
                 </h3>
-                <div class="text-base text-text-gray space-y-6 leading-relaxed font-bold text-nowrap overflow-x-auto">
+                <div class="text-base text-text-gray space-y-6 leading-relaxed font-bold break-words refs-wrap">
                     
                     <div class="space-y-4">
                         <h4 class="font-extrabold text-text-dark underline decoration-accent-terracotta decoration-2">権利とポリシーについて</h4>
@@ -723,6 +990,23 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #EBE3EB; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D4C3D4; }
     </style>
+
+
+<script>
+  // Accordion: when collapsed, allow clicking anywhere on the card to expand.
+  // (When expanded, only the summary toggles, so body clicks won't accidentally close it.)
+  document.querySelectorAll('details.accordion').forEach((d) => {
+    d.addEventListener('click', (e) => {
+      const inSummary = e.target.closest('summary');
+      if (!d.open && !inSummary) {
+        e.preventDefault();
+        d.open = true;
+        const s = d.querySelector('summary');
+        if (s) s.focus({ preventScroll: true });
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
