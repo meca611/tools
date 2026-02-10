@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>当サイトについて - Weather Icons Studio</title>
+    <!-- Fonts & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css" />
+    <!-- Wind Icons Extension (Mandatory for wind arrows) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons-wind.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200" />
+    <link href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kodai-murasaki': '#8C6589', /* メイン：古代紫 */
+                        'accent-terracotta': '#D97F63', /* 強調：洗朱 */
+                        'bg-paper': '#FAF9F6', /* 高級紙のような生成り色 */
+                        'text-dark': '#1A1A1A',
+                        'text-gray': '#6B5A6B',
+                        'list-black': '#1A1A1A',
+                    },
+                    fontFamily: {
+                        sans: ['LINE Seed JP', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'custom': '8px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* UD基準サイズ設計 */
+        html { font-size: 18.66px; }
+
+        body { 
+            font-family: 'LINE Seed JP', sans-serif; 
+            background-color: #FAF9F6; 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            color: #1A1A1A;
+            line-height: 1.8;
+        }
+
+        .text-min-12pt { font-size: 16px; }
+        .text-heading-16pt { font-size: 21.33px; font-weight: 800; }
+        .section-spacing { margin-bottom: 4rem; }
+
+        .marker-accent {
+            background: linear-gradient(transparent 70%, rgba(217, 127, 99, 0.25) 0%);
+            padding: 0 2px;
+            font-weight: 800;
+        }
+
+        .qa-card {
+            transition: transform 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-blur: 2px;
+        }
+        .qa-card:hover { transform: translateX(4px); }
+
+        .paper-card {
+            background: white;
+            border: 1px solid #E5E1DA;
+            box-shadow: 0 4px 20px -4px rgba(0,0,0,0.03);
+        }
+
+        .meca-logo-img {
+            filter: invert(47%) sepia(11%) saturate(1475%) hue-rotate(257deg) brightness(92%) contrast(84%);
+        }
+        
+        .code-snippet {
+            background: #2D2D2D;
+            color: #D4C3D4;
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        
+        /* Table Styles */
+        .learning-table th { background: #F5F1F5; color: #8C6589; font-weight: 800; padding: 0.75rem; text-align: left; font-size: 14px; }
+        .learning-table td { border-bottom: 1px solid #EBE3EB; padding: 0.75rem; font-size: 14px; }
+        
+        /* Accordion Styles */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: slideDown 0.3s ease-in-out; }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Button Glow Animation */
+        .glow-button { position: relative; overflow: hidden; }
+        .glow-button::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: glow 3s infinite;
+        }
+        @keyframes glow {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-family: 'Material Symbols Outlined';
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .color-chip {
+            width: 14px; height: 14px; border-radius: 4px; display: inline-block;
+            margin-right: 6px; border: 1px solid rgba(0,0,0,0.1); vertical-align: middle;
+        }
+
+        .header-icon-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* SVG Icon Utilities */
+        .icon-svg { fill: currentColor; width: 1em; height: 1em; display: inline-block; vertical-align: middle; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-[#E5E1DA] px-4 md:px-12 py-4 z-50 shadow-sm">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 group cursor-default">
+                <div class="w-10 h-10 bg-kodai-murasaki rounded-lg flex items-center justify-center text-white shadow-md">
+                    <!-- Material Symbols "partly_cloudy_day" -->
+                    <span class="material-symbols-outlined !text-2xl notranslate">partly_cloudy_day</span>
+                </div>
+                <div>
+                    <h1 class="text-heading-16pt text-kodai-murasaki leading-none">Weather Icons Studio</h1>
+                    <p class="text-min-12pt font-bold text-text-gray uppercase tracking-[0.2em] mt-1 opacity-70 text-nowrap">Design by しんやせっけいしゃ / MECA</p>
+                </div>
+            </div>
+            <a href="index.html" class="text-min-12pt font-bold text-text-gray hover:text-accent-terracotta transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined !text-lg notranslate">arrow_back</span>
+                スタジオに戻る
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-grow px-6 py-12 md:py-20">
+        <article class="max-w-3xl mx-auto">
+            
+            <div class="text-center mb-16 space-y-3">
+                <h1 class="text-[1.5rem] md:text-[2rem] font-black text-kodai-murasaki tracking-tight">当サイトについて</h1>
+                <p class="text-min-12pt font-bold text-accent-terracotta uppercase tracking-[0.2em]">About Weather Icons Studio</p>
+            </div>
+
+            <!-- Concept Section -->
+            <section class="paper-card rounded-xl p-8 md:p-12 relative overflow-hidden section-spacing">
+                <div class="absolute -right-8 -top-8 text-[#F5F2ED] select-none">
+                    <span class="material-symbols-outlined !text-[10rem] opacity-70 notranslate">partly_cloudy_day</span>
+                </div>
+                <h2 class="text-heading-16pt text-kodai-murasaki mb-6 flex items-center gap-3 relative z-10">
+                    <span class="material-symbols-outlined text-accent-terracotta !text-3xl notranslate">auto_awesome</span>
+                    コードが「天気」に変わる瞬間。
+                </h2>
+                <div class="space-y-6 text-base text-text-gray font-medium relative z-10 leading-relaxed">
+                    <p>
+                        きっかけは、ある天気予報デジタルサイネージを開発していたときのことです。
+                        「101」「203」……APIから送られてくる無機質な数字の羅列（気象庁コード）の意味がわからず、私は悪戦苦闘していました。
+                    </p>
+                    <p>
+                        しかし、コードの規則性を理解し、それを Erik Flower 氏の美しい「Weather Icons」と結びつけたとき、
+                        画面上の数字がいきいきとした「空模様」に変わる面白さに気づきました。
+                    </p>
+                    <p>
+                        このスタジオは、氏のアイコンの美しさを広めるだけでなく、
+                        <span class="marker-accent text-text-dark">「コードと天気の対応」を深く学び、正しく伝える</span>ために作りました。
+                        正確な天気情報は、防災意識を高め、誰かの生活を守ることに繋がると信じているからです。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Usage Section -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">tips_and_updates</span> スタジオの使い方
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-min-12pt">
+                    <div class="bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-4">
+                        <div class="w-10 h-10 bg-kodai-murasaki text-white rounded-lg flex items-center justify-center text-lg font-bold shadow-sm">1</div>
+                        <h4 class="font-extrabold text-text-dark">アイコンを選ぶ</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            気象庁コードごとに整理された一覧や、検索バー、日本語の「晴れ系」などのカテゴリから、イメージに合うものを探します。
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-4">
+                        <div class="w-10 h-10 bg-kodai-murasaki text-white rounded-lg flex items-center justify-center text-lg font-bold shadow-sm">2</div>
+                        <h4 class="font-extrabold text-text-dark">配色を吟味する</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            スタジオのプリセット（基本・警報・夜間）を使って、実装シーンに最適な色を確認します。
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-4">
+                        <div class="w-10 h-10 bg-kodai-murasaki text-white rounded-lg flex items-center justify-center text-lg font-bold shadow-sm">3</div>
+                        <h4 class="font-extrabold text-text-dark">夜間モードを試す</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            夜間モードをオンにすると、晴れアイコンが「月」に変わるなど、ダークテーマでの見え方をシミュレーションできます。
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-4">
+                        <div class="w-10 h-10 bg-kodai-murasaki text-white rounded-lg flex items-center justify-center text-lg font-bold shadow-sm">4</div>
+                        <h4 class="font-extrabold text-text-dark">実装へ</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            コードをコピーし、あなたのプロダクトへ。正しく、美しい天気表示の完成です。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning: JMA Code -->
+            <section class="section-spacing space-y-10">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">menu_book</span> 気象庁コード（JMA）の仕組み
+                </h3>
+                <div class="text-base text-text-gray space-y-6 leading-relaxed">
+                    <p>
+                        日本の気象庁が使用する「天気テロップ番号」の3桁には、それぞれ役割があります。スタジオでは、これらを直感的に扱えるよう配色設計を同期させています。
+                    </p>
+                    
+                    <!-- 100s Place (Basic) -->
+                    <div class="bg-white p-8 rounded-xl border border-[#E5E1DA] shadow-sm">
+                        <h4 class="font-extrabold text-text-dark mb-4 text-min-12pt">1. 基本の4系統（百の位）</h4>
+                        <p class="text-xs mb-6">百の位を見れば、ベースとなる天気がわかります。</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3"><span class="w-12 font-mono font-bold text-kodai-murasaki bg-[#F5F1F5] text-center rounded py-0.5 shrink-0">1xx</span> <span><i class="wi wi-day-sunny text-accent-terracotta mr-1"></i> 晴れ系</span></div>
+                            <div class="flex items-center gap-3"><span class="w-12 font-mono font-bold text-kodai-murasaki bg-[#F5F1F5] text-center rounded py-0.5 shrink-0">2xx</span> <span><i class="wi wi-cloudy text-gray-500 mr-1"></i> 曇り系</span></div>
+                            <div class="flex items-center gap-3"><span class="w-12 font-mono font-bold text-kodai-murasaki bg-[#F5F1F5] text-center rounded py-0.5 shrink-0">3xx</span> <span><i class="wi wi-rain text-blue-500 mr-1"></i> 雨系</span></div>
+                            <div class="flex items-center gap-3"><span class="w-12 font-mono font-bold text-kodai-murasaki bg-[#F5F1F5] text-center rounded py-0.5 shrink-0">4xx</span> <span><i class="wi wi-snow text-cyan-400 mr-1"></i> 雪系</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 10s Place (Accordion) -->
+                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                        <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
+                            <span class="flex items-center gap-2"><span class="marker-accent">2. 変化のタイミング（十の位）の完全解読</span></span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
+                        </summary>
+                        <div class="mt-6 text-sm text-text-gray space-y-6">
+                            <p>
+                                十の位は、天気の「移り変わり」や「特殊な現象」を示す重要なスイッチです。<br>
+                                0〜8までの数字には、それぞれ明確な役割が割り当てられています。
+                            </p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left learning-table border-collapse text-xs">
+                                    <thead>
+                                        <tr><th class="w-16 text-center">十の位</th><th>意味 / 役割</th><th>例 (JMA_DEF準拠)</th></tr>
+                                    </thead>
+                                    <tbody class="font-mono text-text-dark">
+                                        <tr><td class="text-center font-bold text-accent-terracotta">0</td><td>基本（なし・時々・一時）</td><td>100(晴), 101(晴時々曇)</td></tr>
+                                        <tr><td class="text-center font-bold text-kodai-murasaki">1</td><td>のち（後半に変化）</td><td>110(晴後時々曇), 212(曇のち一時雨)</td></tr>
+                                        <tr><td class="text-center font-bold text-kodai-murasaki">2</td><td>のち（特定パターン）</td><td>223(曇のち雨 ※地域による)</td></tr>
+                                        <tr><td class="text-center font-bold text-kodai-murasaki">3</td><td>のち（雨・雪系への変化）</td><td>132(晴のち一時雨)</td></tr>
+                                        <tr><td class="text-center font-bold text-blue-500">4</td><td>のち時々（雨・雪）</td><td>240(曇のち時々雨)</td></tr>
+                                        <tr><td class="text-center font-bold text-blue-500">5</td><td>のち一時（雨・雪）</td><td>250(曇のち一時雨)</td></tr>
+                                        <tr><td class="text-center font-bold text-purple-500">6</td><td>時々（雨・雪が強まる）</td><td>260(曇時々雪), 361(雪時々止む?)</td></tr>
+                                        <tr><td class="text-center font-bold text-purple-500">7</td><td>時々/一時 + 雷・霧など</td><td>170(晴時々雪、雷を伴う)</td></tr>
+                                        <tr><td class="text-center font-bold text-red-500">8</td><td>のち + 特殊現象</td><td>181(晴のち雪で雷を伴う)</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- 1s Place (Accordion) -->
+                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                        <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
+                            <span class="flex items-center gap-2"><span class="marker-accent">3. 変化の魔法（一の位）の完全解読</span></span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
+                        </summary>
+                        <div class="mt-6 text-sm text-text-gray space-y-6">
+                            <p>
+                                一の位は、「変化の種類（時々・一時）」と「変化後の天気（副要素）」の組み合わせです。
+                            </p>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left learning-table border-collapse text-xs">
+                                    <thead>
+                                        <tr><th class="w-16 text-center">一の位</th><th>意味</th><th>対象</th><th>例 (JMA_DEF準拠)</th></tr>
+                                    </thead>
+                                    <tbody class="font-mono text-text-dark">
+                                        <tr><td class="text-center font-bold text-accent-terracotta">0</td><td>なし</td><td>-</td><td>100 快晴</td></tr>
+                                        <tr><td class="text-center font-bold text-kodai-murasaki">1</td><td>時々</td><td>晴/曇</td><td>201 曇時々晴</td></tr>
+                                        <tr><td class="text-center font-bold text-kodai-murasaki">2</td><td>一時</td><td>雨</td><td>202 曇一時雨</td></tr>
+                                        <tr><td class="text-center font-bold text-blue-500">4</td><td>時々</td><td>雨</td><td>301 雨時々晴</td></tr>
+                                        <tr><td class="text-center font-bold text-cyan-500">6</td><td>時々</td><td>雪</td><td>401 雪時々晴</td></tr>
+                                        <tr><td class="text-center font-bold text-purple-500">8</td><td>のち</td><td>雨/雪</td><td>281 曇後雨</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Column Section -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">lightbulb</span> デザインの幅を広げるコラム
+                </h3>
+                <div class="space-y-4">
+                    <!-- Wind Column (Revised) -->
+                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                        <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
+                            <span class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-kodai-murasaki !text-xl notranslate">explore</span>
+                                風向アイコン：度数と16方位の使い分け
+                            </span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
+                        </summary>
+                        <div class="mt-6 text-sm text-text-gray space-y-6 leading-relaxed font-bold">
+                            
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-100 text-xs">
+                                <p class="text-red-800 mb-1 font-extrabold">⚠️ 重要：追加CSSとクラス指定</p>
+                                <p>風向アイコンを表示するには、本体CSSとは別に <code>weather-icons-wind.css</code> の読み込みが必須です。<br>
+                                クラスは <code>wi wi-wind</code> に加え、方向を示すクラス（例：<code>towards-23-deg</code> や <code>wi-towards-n</code>）の計3つを指定します。</p>
+                            </div>
+
+                            <!-- Wind Degree Examples -->
+                            <div class="space-y-4">
+                                <h5 class="text-text-dark border-b-2 border-kodai-murasaki pb-2 font-extrabold text-min-12pt flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-accent-terracotta !text-lg">360</span> Wind Degree Examples (度数指定)
+                                </h5>
+                                <p class="text-xs">
+                                    APIから「風向：23度」のような<strong>数値データ</strong>が返ってくる場合に最適です。0度から360度まで、1度刻みで精密に表現できます。
+                                </p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-[#FDF7FD] p-4 rounded-lg border border-[#EBE3EB]">
+                                        <p class="text-kodai-murasaki font-extrabold mb-2 text-xs">Towards (向かう方向)</p>
+                                        <p class="text-[10px] mb-2 font-normal">風が吹き抜けていく「行先」を指定します。0度が上（北）です。</p>
+                                        <div class="flex items-center gap-2 text-xs font-mono bg-white p-2 rounded border border-[#EBE3EB]">
+                                            <i class="wi wi-wind towards-23-deg text-xl"></i>
+                                            <span>towards-23-deg</span>
+                                        </div>
+                                    </div>
+                                    <div class="bg-[#FDF7FD] p-4 rounded-lg border border-[#EBE3EB]">
+                                        <p class="text-accent-terracotta font-extrabold mb-2 text-xs">From (吹いてくる方向)</p>
+                                        <p class="text-[10px] mb-2 font-normal">風の「発生源」を指定します。南風なら180度を指定します。</p>
+                                        <div class="flex items-center gap-2 text-xs font-mono bg-white p-2 rounded border border-[#EBE3EB]">
+                                            <i class="wi wi-wind from-180-deg text-xl"></i>
+                                            <span>from-180-deg</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Wind Cardinal Examples -->
+                            <div class="space-y-4">
+                                <h5 class="text-text-dark border-b-2 border-kodai-murasaki pb-2 font-extrabold text-min-12pt flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-accent-terracotta !text-lg">explore</span> Wind Cardinal Examples (16方位指定)
+                                </h5>
+                                <p class="text-xs">
+                                    「北」「南南東」といった<strong>方位名</strong>で管理したい場合に便利です。North(n)を上として、16方位のクラスが用意されています。
+                                </p>
+                                <div class="overflow-x-auto border border-[#EBE3EB] rounded-lg">
+                                    <table class="w-full text-left learning-table border-collapse text-[11px]">
+                                        <thead>
+                                            <tr>
+                                                <th class="w-1/4">方位</th>
+                                                <th class="text-center">Towards (行く先)</th>
+                                                <th class="text-center">From (風上)</th>
+                                                <th>Class (Towards例)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="font-mono text-text-dark">
+                                            <tr>
+                                                <td>北 (N)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-n text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-n text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-n</td>
+                                            </tr>
+                                            <tr>
+                                                <td>北北東 (NNE)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-nne text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-nne text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-nne</td>
+                                            </tr>
+                                            <tr>
+                                                <td>北東 (NE)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-ne text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-ne text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-ne</td>
+                                            </tr>
+                                            <tr>
+                                                <td>東北東 (ENE)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-ene text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-ene text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-ene</td>
+                                            </tr>
+                                            <tr>
+                                                <td>東 (E)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-e text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-e text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-e</td>
+                                            </tr>
+                                            <tr>
+                                                <td>東南東 (ESE)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-ese text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-ese text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-ese</td>
+                                            </tr>
+                                            <tr>
+                                                <td>南東 (SE)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-se text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-se text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-se</td>
+                                            </tr>
+                                            <tr>
+                                                <td>南南東 (SSE)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-sse text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-sse text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-sse</td>
+                                            </tr>
+                                            <tr>
+                                                <td>南 (S)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-s text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-s text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-s</td>
+                                            </tr>
+                                            <tr>
+                                                <td>南南西 (SSW)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-ssw text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-ssw text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-ssw</td>
+                                            </tr>
+                                            <tr>
+                                                <td>南西 (SW)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-sw text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-sw text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-sw</td>
+                                            </tr>
+                                            <tr>
+                                                <td>西南西 (WSW)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-wsw text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-wsw text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-wsw</td>
+                                            </tr>
+                                            <tr>
+                                                <td>西 (W)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-w text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-w text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-w</td>
+                                            </tr>
+                                            <tr>
+                                                <td>西北西 (WNW)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-wnw text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-wnw text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-wnw</td>
+                                            </tr>
+                                            <tr>
+                                                <td>北西 (NW)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-nw text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-nw text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-nw</td>
+                                            </tr>
+                                            <tr>
+                                                <td>北北西 (NNW)</td>
+                                                <td class="text-center"><i class="wi wi-wind wi-towards-nnw text-xl text-kodai-murasaki"></i></td>
+                                                <td class="text-center"><i class="wi wi-wind wi-from-nnw text-xl text-accent-terracotta"></i></td>
+                                                <td>wi-towards-nnw</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="bg-[#FDF7FD] p-4 rounded-lg text-xs font-bold border border-[#EBE3EB]">
+                                     <p class="mb-2"><span class="text-kodai-murasaki">💡 ポイント：</span>アプリの仕様に合わせて選ぼう</p>
+                                     <ul class="list-disc pl-5 space-y-1 text-text-gray font-normal">
+                                        <li><strong>Towards</strong>: 「南に向かって吹く風」を表現（矢印は下を向く）</li>
+                                        <li><strong>From</strong>: 「南から吹いてくる風」を表現（矢印は上を向く）</li>
+                                     </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Moon Column -->
+                    <details class="group bg-white p-6 rounded-xl border border-[#E5E1DA] shadow-sm cursor-pointer transition-all hover:shadow-md">
+                        <summary class="font-extrabold text-text-dark text-min-12pt flex items-center justify-between">
+                            <span class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-kodai-murasaki !text-xl notranslate">dark_mode</span>
+                                月齢アイコン：28段階の精密なサイクル
+                            </span>
+                            <span class="transform group-open:rotate-180 transition-transform duration-300 text-accent-terracotta">▼</span>
+                        </summary>
+                        <div class="mt-6 text-sm text-text-gray space-y-4 leading-relaxed font-bold text-nowrap overflow-x-auto">
+                            <p>
+                                Weather Iconsには <code>new</code>（新月）から <code>full</code>（満月）まで、計28段階のアイコンが用意されています。
+                            </p>
+                            <div class="flex flex-wrap gap-4 text-3xl text-kodai-murasaki bg-slate-900 p-6 rounded-lg justify-center border border-slate-800 shadow-inner">
+                                <i class="wi wi-moon-alt-new text-white/40" title="New Moon"></i>
+                                <i class="wi wi-moon-alt-waxing-crescent-3 text-white/60" title="Waxing Crescent"></i>
+                                <i class="wi wi-moon-alt-first-quarter text-white/80" title="First Quarter"></i>
+                                <i class="wi wi-moon-alt-waxing-gibbous-3 text-white" title="Waxing Gibbous"></i>
+                                <i class="wi wi-moon-alt-full text-white shadow-[0_0_15px_rgba(255,255,255,0.4)]" title="Full Moon"></i>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- 基本の4色の配色設計 -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">palette</span> 基本の4色の配色設計
+                </h3>
+                <div class="text-base text-text-gray space-y-6 leading-relaxed">
+                    <p>天気予報の実装において、色は「直感的理解」を助ける最も重要な要素です。スタジオでは、JMAコードの分類に基づき、視認性と情緒的意味を両立させた配色を採用しています。</p>
+                    
+                    <div class="bg-white p-6 md:p-8 rounded-xl border border-[#E5E1DA] space-y-8 shadow-sm">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded bg-[#D97F63] shadow-sm"></div>
+                                <h4 class="font-extrabold text-text-dark">晴れ系：#D97F63 (洗朱)</h4>
+                            </div>
+                            <p class="text-[14px]">太陽の熱量と「注意喚起」を兼ねた暖色。日本の伝統色である洗朱を採用し、画面上で適度な活気を与えます。</p>
+                        </div>
+
+                        <div class="space-y-4 border-t border-[#F5F1F5] pt-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded bg-[#6B7280] shadow-sm"></div>
+                                <h4 class="font-extrabold text-text-dark">曇り系：#6B7280 (Gray)</h4>
+                            </div>
+                            <p class="text-[14px]">ニュートラルで、周囲の情報を邪魔しない色。空が雲で覆われ、光が遮られている状態を落ち着いたグレーで象徴します。</p>
+                        </div>
+
+                        <div class="space-y-4 border-t border-[#F5F1F5] pt-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded bg-[#3B82F6] shadow-sm"></div>
+                                <h4 class="font-extrabold text-text-dark">雨系：#3B82F6 (Blue)</h4>
+                            </div>
+                            <p class="text-[14px]">水と湿気、転じて視界の悪さを想起させる寒色。降水現象を瞬時に認識させるための、彩度を高めたブルーです。</p>
+                        </div>
+
+                        <div class="space-y-4 border-t border-[#F5F1F5] pt-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded bg-[#22D3EE] shadow-sm"></div>
+                                <h4 class="font-extrabold text-text-dark">雪系：#22D3EE (Cyan)</h4>
+                            </div>
+                            <p class="text-[14px]">氷の結晶と低温をイメージした明るい水色. 雨のブルーよりも明度を高くすることで、結晶の煌めきと冷たさを表現します。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 夜間用の配色設計 -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">nights_stay</span> 夜間用の配色設計
+                </h3>
+                <div class="text-base text-text-gray space-y-6 leading-relaxed">
+                    <p>ダークモードや夜間表示では、背景色（黒系）に馴染みつつ、情報の可読性を保つ配色が求められます。スタジオの「夜間用」プリセットは以下の設計に基づきます。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                            <div class="h-10 rounded bg-[#FFFDE7] w-full shadow-sm"></div>
+                            <p class="font-bold text-white">快晴 (月明かり / #FFFDE7)</p>
+                            <p class="text-slate-400">暗闇で最も目に優しいクリーム色。</p>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                            <div class="h-10 rounded bg-[#E0E7FF] w-full shadow-sm"></div>
+                            <p class="font-bold text-white">曇り (星空 / #E0E7FF)</p>
+                            <p class="text-slate-400">穏やかな夜空を感じさせる薄い青。</p>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                            <div class="h-10 rounded bg-[#C7D2FE] w-full shadow-sm"></div>
+                            <p class="font-bold text-white">雨 (静寂 / #C7D2FE)</p>
+                            <p class="text-slate-400">しっとりした夜を想起させるインディゴ。</p>
+                        </div>
+                        <div class="bg-slate-900 p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2 text-nowrap">
+                            <div class="h-10 rounded bg-[#FFFFFF] w-full shadow-sm"></div>
+                            <p class="font-bold text-white">雪 (ホワイト / #FFFFFF)</p>
+                            <p class="text-slate-400">鮮明なコントラストを保つ基本白。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 防災情報の配色（UD） -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">gpp_maybe</span> 防災情報の配色（UD）
+                </h3>
+                <div class="text-base text-text-gray space-y-6 leading-relaxed">
+                    <p>スタジオの「警報」プリセットには、気象庁やデジタル庁が推奨する<span class="marker-accent text-text-dark">ユニバーサルデザインカラー</span>を採用しています。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-white p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2">
+                            <div class="h-10 rounded bg-[#B40068] w-full shadow-sm"></div>
+                            <p class="font-bold text-text-dark">特別警報 (#B40068)</p>
+                            <p class="opacity-70">命を守る、最も強い紫赤。</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2">
+                            <div class="h-10 rounded bg-[#FF2800] w-full shadow-sm"></div>
+                            <p class="font-bold text-text-dark">警報 / 危険 (#FF2800)</p>
+                            <p class="opacity-70">重大な災害、強く警告する赤。</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-[#EBE3EB] text-center space-y-2">
+                            <div class="h-10 rounded bg-[#F2E700] w-full shadow-sm"></div>
+                            <p class="font-bold text-text-dark">注意報 (#F2E700)</p>
+                            <p class="opacity-70">注意喚起、視認性の高い黄色。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Co-creation -->
+            <section class="section-spacing space-y-6">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">auto_awesome</span> 制作の裏側について（AIとの共創）
+                </h3>
+                <div class="text-base text-text-gray space-y-4 leading-relaxed font-bold">
+                    <p>
+                        このツールの設計・実装は、開発者の想いをAIが汲み取り、共に対話を重ねることで実現しました。
+                    </p>
+                    <p>
+                        デジタルサイネージ開発での実体験に基づいた「コードの面白さ」や「防災への貢献」というコンセプトを、AIの技術によって誰もが学び、使える形へと昇華させた「人間とAIの共同作業」の成果です。
+                    </p>
+                </div>
+            </section>
+
+            <!-- Usage & License -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">history_edu</span> 出典・参考文献・ライセンス
+                </h3>
+                <div class="text-base text-text-gray space-y-6 leading-relaxed font-bold text-nowrap overflow-x-auto">
+                    
+                    <div class="space-y-4">
+                        <h4 class="font-extrabold text-text-dark underline decoration-accent-terracotta decoration-2">権利とポリシーについて</h4>
+                        <div class="bg-[#FDF7FD] p-5 rounded-lg border border-[#EBE3EB] space-y-3 text-xs leading-relaxed">
+                            <p><strong>1. 再配布について:</strong> 当サイトはアイコンファイルそのものを自サーバーで再配布するのではなく、提供元の公式CDN（cdnjs等）を介して表示しています。これは推奨されるライブラリ利用形態の一つです。</p>
+                            <p><strong>2. 著作権の尊重:</strong> 使用しているフォントの著作権は制作者・企業に帰属します。当ツールはそれらの利用を容易にするためのインターフェースを提供しており、権利を主張するものではありません。</p>
+                            <p><strong>3. ライセンスの継承:</strong> 当サイトから取得したコードをプロジェクトに組み込む際は、各フォントの元ライセンス（SIL OFL / Apache 2.0等）が適用されます。商用利用を含め、安全に利用可能です。</p>
+                            <p><strong>4. コードの利用について:</strong> 生成したコードは、個人・商用問わず自由に使ってください。ただし、このツール自体のまるごとコピーはご遠慮ください。</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 border-t border-[#F5F1F5] pt-6">
+                        <div class="flex flex-wrap gap-3">
+                            <a href="https://erikflowers.github.io/weather-icons/" target="_blank" class="glow-button inline-flex items-center gap-2 px-6 py-4 bg-accent-terracotta text-white rounded-lg font-black shadow-lg transform hover:-translate-y-1 transition-all">
+                                <i class="wi wi-day-sunny text-2xl"></i>
+                                Weather Icons (Erik Flowers)
+                            </a>
+                        </div>
+                        <ul class="list-disc pl-5 space-y-2 mt-3 text-sm">
+                            <li><a href="https://www.jma.go.jp/jma/kishou/know/yougo_hp/mokuji.html" target="_blank" class="hover:text-accent-terracotta underline">気象庁 | 予報用語</a></li>
+                            <li><a href="https://www.jma.go.jp/jma/kishou/info/colorguide/index.html" target="_blank" class="hover:text-accent-terracotta underline">気象庁 | 気象情報の配色に関するガイドライン</a></li>
+                            <li><a href="https://open-meteo.com/en/docs" target="_blank" class="hover:text-accent-terracotta underline">Open-Meteo Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div class="space-y-2 border-t border-[#EBE3EB] pt-6 text-sm opacity-60">
+                        <p>Weather Icons: SIL OFL 1.1 / Material Symbols: Apache License 2.0 / Content: CC BY 4.0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Acknowledgments -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-accent-terracotta pl-4 header-icon-text">
+                    <span class="material-symbols-outlined !text-2xl notranslate">favorite</span> 謝辞 / Acknowledgments
+                </h3>
+                <div class="bg-white p-8 rounded-xl border border-[#E5E1DA] shadow-sm space-y-6">
+                    <div class="text-base text-text-gray space-y-6 leading-relaxed italic font-medium font-bold">
+                        <p>
+                            本プロジェクトの核である「Weather Icons」の制作者、Erik Flower 氏に最大の敬意と感謝を捧げます。
+                            氏が情熱を注いで作り上げた美しいアイコンセットと、それをオープンソースとして公開する寛大な精神がなければ、このスタジオは決して生まれることはありませんでした。
+                        </p>
+                        <p class="border-t border-[#F5F1F5] pt-6 opacity-80">
+                            Our deepest gratitude goes to Erik Flower, the creator of "Weather Icons." 
+                            This studio would never have existed without the beautiful icon sets you built with such passion and your generous spirit in sharing them as open-source. Thank you for your incredible work.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white/50 border-t border-[#E5E1DA] pt-12 pb-10 px-6 font-bold">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="flex flex-col gap-4 items-center md:items-start text-min-12pt">
+                <div class="h-12 overflow-hidden flex items-center justify-center">
+                    <img src="mecalogo.png" alt="MECA Logo" class="meca-logo-img h-full w-auto object-contain" onerror="this.parentElement.innerHTML='MECA'">
+                </div>
+                <div class="space-y-2 flex flex-col items-center md:items-start">
+                    <p class="font-bold text-text-dark leading-tight uppercase tracking-widest text-center md:text-left text-nowrap">しんやせっけいしゃ（MECA）</p>
+                    <p class="font-bold text-text-gray tracking-widest opacity-80 text-center md:text-left text-nowrap">&copy; 2026 Midnight Express Computational Archives</p>
+                    <div class="h-[2px] w-12 bg-kodai-murasaki mt-1 mb-2 mx-auto md:mx-0"></div>
+                    <div class="flex flex-col items-center md:items-start gap-1">
+                        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="opacity-70 hover:opacity-100 transition-opacity">
+                            <img alt="クリエイティブ・コモンズ" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/80x15.png" />
+                        </a>
+                        <span class="text-[10px] text-text-gray opacity-70">Licensed under <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="underline">CC BY 4.0</a>.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-8 text-min-12pt font-bold text-text-gray uppercase tracking-widest">
+                <a href="index.html" class="hover:text-accent-terracotta transition-colors">HOME</a>
+                <a href="#" class="text-kodai-murasaki cursor-default underline decoration-accent-terracotta decoration-2">ABOUT</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Scrollbar Style -->
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #EBE3EB; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D4C3D4; }
+    </style>
+
+</body>
+</html>
