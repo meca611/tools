@@ -1,1 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>当サイトについて - Material Symbols Studio</title>
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200" />
+    <link href="https://fonts.googleapis.com/css2?family=LINE+Seed+JP:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'kodai-murasaki': '#8C6589', /* メイン：古代紫 */
+                        'accent-terracotta': '#D97F63', /* 強調：洗朱 */
+                        'bg-paper': '#FAF9F6', /* 高級紙のような生成り色 */
+                        'text-dark': '#1A1A1A',
+                        'text-gray': '#6B5A6B',
+                        'list-black': '#1A1A1A',
+                    },
+                    fontFamily: {
+                        sans: ['LINE Seed JP', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'custom': '8px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* UD基準に基づいたサイズ設計
+           12pt = 16px (最小)
+           14pt = 18.66px (本文基準)
+           16pt = 21.33px (見出し基準)
+        */
+        html { font-size: 18.66px; }
 
+        body { 
+            font-family: 'LINE Seed JP', sans-serif; 
+            background-color: #FAF9F6; 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            color: #1A1A1A;
+            line-height: 1.8;
+        }
+
+        .text-min-12pt { font-size: 16px; }
+        .text-heading-16pt { font-size: 21.33px; font-weight: 800; }
+
+        .section-spacing { margin-bottom: 4rem; }
+
+        /* 蛍光ペン（アンダーライン）スタイルの強調 */
+        .marker-accent {
+            background: linear-gradient(transparent 70%, rgba(217, 127, 99, 0.25) 0%);
+            padding: 0 2px;
+            font-weight: 800;
+        }
+
+        .qa-card {
+            transition: transform 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-blur: 2px;
+        }
+        .qa-card:hover { transform: translateX(4px); }
+        .paper-card {
+            background: white;
+            border: 1px solid #E5E1DA;
+            box-shadow: 0 4px 20px -4px rgba(0,0,0,0.03);
+        }
+        .meca-logo-img {
+            filter: invert(47%) sepia(11%) saturate(1475%) hue-rotate(257deg) brightness(92%) contrast(84%);
+        }
+        .code-snippet {
+            background: #2D2D2D;
+            color: #D4C3D4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <header class="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-[#E5E1DA] px-4 md:px-12 py-4 z-50 shadow-sm">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 group cursor-default">
+                <div class="w-10 h-10 bg-kodai-murasaki rounded-lg flex items-center justify-center text-white shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+                        <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+                        <line x1="6" y1="2" x2="6" y2="4"></line>
+                        <line x1="10" y1="2" x2="10" y2="4"></line>
+                        <line x1="14" y1="2" x2="14" y2="4"></line>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-heading-16pt text-kodai-murasaki leading-none">Material Symbols Studio</h1>
+                    <p class="text-min-12pt font-bold text-text-gray uppercase tracking-[0.2em] mt-1 opacity-70 text-nowrap">Design by しんやせっけいしゃ / MECA</p>
+                </div>
+            </div>
+            <a href="index.html" class="text-min-12pt font-bold text-text-gray hover:text-kodai-murasaki transition-colors flex items-center gap-2">
+                <span class="material-symbols-outlined !text-lg notranslate">arrow_back</span>
+                スタジオに戻る
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-grow px-6 py-12 md:py-20">
+        <article class="max-w-3xl mx-auto">
+            
+            <div class="text-center mb-16 space-y-3">
+                <h1 class="text-[1.5rem] md:text-[2rem] font-black text-kodai-murasaki tracking-tight text-nowrap">当サイトについて</h1>
+                <p class="text-min-12pt font-bold text-accent-terracotta uppercase tracking-[0.2em]">About Material Symbols Studio</p>
+            </div>
+
+            <!-- Concept Section -->
+            <section class="paper-card rounded-xl p-8 md:p-12 relative overflow-hidden section-spacing">
+                <div class="absolute -right-8 -top-8 text-[#F5F2ED] select-none">
+                    <span class="material-symbols-outlined !text-[10rem] opacity-70 notranslate">coffee</span>
+                </div>
+                <h2 class="text-heading-16pt text-kodai-murasaki mb-6 flex items-center gap-3 relative z-10 text-nowrap">
+                    <span class="material-symbols-outlined text-kodai-murasaki notranslate">lightbulb</span>
+                    暇なときこそ、吟味できる。
+                </h2>
+                <div class="space-y-6 text-base text-text-gray font-medium relative z-10 leading-relaxed">
+                    <p>作業に行き詰まって、ふと席を立つ。トイレに行ったり、コーヒーを淹れて一息ついたり。</p>
+                    <p>僕は、そんな<span class="marker-accent text-text-dark">「作業から離れた余白の時間」</span>にこそ、「あ、これ次のデザインで使えるかも」っていう良い出会いがあると思っています。</p>
+                    <p>このサイトは、Googleの「Material Symbols」という素晴らしい素材を、そんな暇な時間にぼーっと眺めて、「これいいな」と思ったものを自分好みに調整してメモしておく。そんな使い方ができたらいいなと思って、僕、<span class="font-bold text-text-dark">しんやせっけいしゃ（MECA）</span>が作ってみました。 <span class="marker-accent text-text-dark">表示されているものは、すべてそのままコードとして使えます。</span></p>
+                </div>
+            </section>
+
+            <!-- Quick Guide for Beginners -->
+            <section class="section-spacing space-y-8">
+                <!-- 見出しのボーダー色を古代紫に統一 -->
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-kodai-murasaki pl-4 text-nowrap">
+                    Material Symbols の使いかた（導入ガイド）
+                </h3>
+                <div class="text-base text-text-gray space-y-6 leading-relaxed">
+                    <p>このスタジオで調整したアイコンを自分のWebサイトで使うには、まずHTMLに<span class="marker-accent text-text-dark">「フォントを読み込むためのおまじない」</span>を書く必要があります。</p>
+                    
+                    <div class="space-y-4">
+                        <h4 class="font-extrabold text-kodai-murasaki text-min-12pt">1. HTMLの &lt;head&gt; 内に以下のタグを貼り付けます</h4>
+                        <p class="text-xs">サイトの共通部分（&lt;head&gt;〜&lt;/head&gt;の間）に、この一行を追加してください。</p>
+                        <div class="code-snippet">
+                            &lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200" /&gt;
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="font-extrabold text-kodai-murasaki text-min-12pt">2. なぜこの「長い呪文」が必要なの？</h4>
+                        <p>URLの最後にある <span class="font-mono bg-slate-100 px-1 rounded text-xs">opsz,wght,FILL,GRAD...</span> という部分は、アイコンの<span class="marker-accent text-text-dark">「太さ」や「塗りつぶし」を自由に変えるために必要なパラメータ</span>です。これを含めて読み込むことで、当スタジオで設定したデザインがあなたのサイトでも忠実に再現されます。</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="font-extrabold text-kodai-murasaki text-min-12pt">3. アイコンを配置する</h4>
+                        <p>あとは、スタジオでコピーしたコードを好きな場所に貼るだけです。これだけで、Webサイトに美しいアイコンが魔法のように現れます。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Q&A Section -->
+            <section class="section-spacing space-y-8">
+                <!-- 見出しのボーダー色を古代紫に統一 -->
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-kodai-murasaki pl-4 text-nowrap">よくある質問とよくない答え</h3>
+                <div class="space-y-4">
+                    <div class="qa-card p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-3 text-min-12pt">
+                        <p class="font-black text-kodai-murasaki flex gap-2"><span class="opacity-50">Q.</span> 誰が作っているんですか？</p>
+                        <p class="text-text-gray flex gap-2"><span class="text-accent-terracotta font-black">A.</span> <span class="font-bold text-text-dark">しんやせっけいしゃ</span>と、開発母体である <span class="font-mono">MECA</span> です。コーヒーを飲みすぎた人間とAIの仕業です。</p>
+                    </div>
+                    <div class="qa-card p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-3 text-min-12pt">
+                        <p class="font-black text-kodai-murasaki flex gap-2"><span class="opacity-50">Q.</span> 無料で使っていいんですか？</p>
+                        <p class="text-text-gray flex gap-2"><span class="text-accent-terracotta font-black">A.</span> 無料です。ですが、あまりに使いすぎて指が疲れきっても責任は持てませんので、適度に休憩してくださいね。</p>
+                    </div>
+                    <div class="qa-card p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-3 text-min-12pt">
+                        <p class="font-black text-kodai-murasaki flex gap-2"><span class="opacity-50">Q.</span> アイコンの一部だけ色を変えたいです！</p>
+                        <p class="text-text-gray flex gap-2"><span class="text-accent-terracotta font-black">A.</span> クレヨンで画面を直接塗れば可能ですが、モニターが壊れるのでおすすめしません。おとなしく単色で楽しみましょう。</p>
+                    </div>
+                    <div class="qa-card p-6 rounded-xl border border-[#E5E1DA] shadow-sm space-y-3 text-min-12pt">
+                        <p class="font-black text-kodai-murasaki flex gap-2"><span class="opacity-50">Q.</span> 全てのアイコンを網羅していますか？</p>
+                        <p class="text-text-gray flex gap-2"><span class="text-accent-terracotta font-black">A.</span><span><span class="font-bold text-text-dark">「使えるものだけ」</span>を網羅しています。ここに表示されているアイコンは、<span class="marker-accent text-text-dark">Google Fonts の Material Symbols フォントに実在するもの</span>だけ。つまり、見つけたらそのままコードとして使えます。フォントに無いIDは、別ページで「参考情報」として紹介しています。</span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Roles and Specifications -->
+            <section class="section-spacing space-y-8">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-kodai-murasaki pl-4 text-nowrap">仕様と制作の背景</h3>
+                <div class="space-y-8">
+                    <div class="space-y-4 text-base">
+                        <h4 class="font-extrabold text-kodai-murasaki">このツールの役割</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            本サイトは、Google Fonts が提供する可変アイコンフォント <strong class="text-kodai-murasaki">Material Symbols</strong> を直感的に扱うための非公式チューニングツールです。あらゆるユーザーが快適に利用できるよう、UD基準の設計を追求しています。
+                        </p>
+                        <a href="https://fonts.google.com/icons?icon.set=Material+Symbols" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-kodai-murasaki text-white text-min-12pt font-bold rounded-lg hover:bg-[#7a5877] transition-all shadow-md">
+                            公式 Material Symbols ライブラリ <span class="material-symbols-outlined !text-base notranslate">open_in_new</span>
+                        </a>
+                    </div>
+
+                    <!-- Display Policy (Added) -->
+                    <div class="space-y-3 text-base border-t border-[#F5F1F5] pt-8">
+                        <h4 class="font-extrabold text-kodai-murasaki">表示ポリシー（このスタジオの約束）</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            このスタジオに表示されるアイコンは、<span class="marker-accent text-text-dark">「フォントとして実際に使える」Material Symbols のみ</span>です。<br>
+                            検索や一覧に出てくるものが、そのまま誰の環境でも再現できる。――この信頼を優先しました。
+                        </p>
+                        <p class="text-text-gray leading-relaxed">
+                            なお、Material Symbols 由来のIDでも、フォントに含まれていないものがあります。その場合はアイコンとしては表示せず、<a href="reference_ids.html" class="text-kodai-murasaki font-bold hover:text-accent-terracotta hover:underline transition-colors">参考ID一覧</a> で「IDのみ」を紹介しています。
+                        </p>
+                    </div>
+                    </div>
+                    <div class="space-y-3 text-base border-t border-[#F5F1F5] pt-8">
+                        <h4 class="font-extrabold text-kodai-murasaki">配色について</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            Material Symbols はフォントとして設計されているため、基本的には<span class="marker-accent text-text-dark">「1つのアイコンにつき1色」</span>の指定となります。多色使いはできませんが、その分シンプルで一貫した美しさを保つことができます。
+                        </p>
+                    </div>
+                    <div class="space-y-3 text-base border-t border-[#F5F1F5] pt-8">
+                        <h4 class="font-extrabold text-kodai-murasaki">制作の裏側（AIとの共創）</h4>
+                        <p class="text-text-gray leading-relaxed">
+                            このサイトの機能の多くは、<span class="marker-accent text-text-dark">AI（生成AI）との対話</span>を通じて形にされました。僕が大切にしている「余白の時間」というコンセプトを、AIの技術を借りて実装した共同作業の成果です。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- License and Rights -->
+            <section class="section-spacing space-y-6">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-kodai-murasaki pl-4 text-nowrap">ライセンスと権利</h3>
+                <div class="space-y-8 text-base text-text-gray leading-relaxed">
+                    <div class="space-y-3">
+                        <h4 class="font-extrabold text-kodai-murasaki">コードの利用について</h4>
+                        <p>生成したコードは、個人・商用問わず自由に使ってください。ただし、このツール自体のまるごとコピーはご遠慮ください。</p>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="font-extrabold text-kodai-murasaki">アイコンの権利</h4>
+                        <p>すべて Google が提供している Material Symbols です。著作権は Google に帰属します（Apache License 2.0）。</p>
+                    </div>
+                    <div class="space-y-4">
+                        <h4 class="font-extrabold text-kodai-murasaki">当サイトのライセンス</h4>
+                        <p>
+                            サイトの構成やテキストは、<a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="text-kodai-murasaki font-bold hover:text-accent-terracotta hover:underline transition-colors">クリエイティブ・コモンズ 表示 4.0 国際 ライセンス</a> の下にあります。
+                        </p>
+                        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="inline-block opacity-80 hover:opacity-100 transition-opacity">
+                            <img alt="クリエイティブ・コモンズ・ライセンス" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer-like Content -->
+            <section class="section-spacing space-y-6">
+                <h3 class="text-heading-16pt text-kodai-murasaki border-l-4 border-kodai-murasaki pl-4 text-nowrap">その他</h3>
+                <div class="text-base text-text-gray space-y-4">
+                    <p>免責事項：正確性には気をつけていますが、本サイトの利用で起きたトラブルには責任を負えません。</p>
+                    <p>お問い合わせ：不具合報告等は、運営元の <span class="font-mono">しんやせっけいしゃ（MECA）</span> までお気軽にどうぞ。</p>
+                </div>
+            </section>
+
+        </article>
+    </main>
+
+    <footer class="bg-white/50 border-t border-[#E5E1DA] pt-12 pb-10 px-6">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="flex flex-col gap-4 items-center md:items-start text-min-12pt">
+                <div class="flex items-center gap-3">
+                    <div class="h-12 overflow-hidden flex items-center justify-center">
+                        <img src="mecalogo.png" alt="MECA Logo" class="meca-logo-img h-full w-auto object-contain" onerror="this.parentElement.innerHTML='MECA'">
+                    </div>
+                </div>
+                <div class="space-y-1 text-nowrap">
+                    <p class="font-bold text-text-dark leading-tight uppercase tracking-widest text-center md:text-left">
+                        しんやせっけいしゃ（MECA）
+                    </p>
+                    <p class="font-bold text-text-gray tracking-widest opacity-80 text-center md:text-left">
+                        &copy; 2026 Midnight Express Computational Archives
+                    </p>
+                    <div class="h-[2px] w-12 bg-kodai-murasaki mt-2 mx-auto md:mx-0"></div>
+                </div>
+            </div>
+            
+            <div class="flex gap-8 text-min-12pt font-bold text-text-gray uppercase tracking-widest">
+                <a href="index.html" class="hover:text-accent-terracotta transition-colors">HOME</a>
+                <a href="#" class="text-kodai-murasaki cursor-default">ABOUT</a>
+            </div>
+        </div>
+    
+<div class="mt-6 flex flex-wrap gap-4 items-center justify-center">
+  <a href="index.html" class="text-min-12pt font-black text-accent-terracotta uppercase tracking-widest hover:underline text-nowrap">スタジオ &rarr;</a>
+  <a href="about.html" class="text-min-12pt font-black text-accent-terracotta uppercase tracking-widest hover:underline text-nowrap">ABOUT &rarr;</a>
+  <a href="reference_ids.html" class="text-min-12pt font-black text-accent-terracotta uppercase tracking-widest hover:underline text-nowrap">参考ID一覧 &rarr;</a>
+</div>
+</footer>
+
+</body>
+</html>
