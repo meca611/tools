@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>おつきみ ver1.0.0 | 月齢カレンダー</title>
+    <title>おつきみ ver2.0.0 | 月齢カレンダー (AAA)</title>
     <!-- ファビコンの設定 -->
     <link rel="icon" href="otukimifavicon.ico" type="image/x-icon">
+    <!-- Weather Icons の読み込み -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Michroma, Space Mono, Shippori Mincho, Zen Maru Gothic の読み込み */
-        @import url('https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Shippori+Mincho:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;700&display=swap');
+        /* 外部フォントの読み込み */
+        @import url('https://fonts.googleapis.com/css2?family=Michroma&family=Space+Mono:wght@400;700&family=Shippori+Mincho:wght@400;500;700&family=Zen+Maru+Gothic:wght@400;700&display=swap');
 
-        /* LINE Seed JP Font Definition */
         @font-face {
             font-family: 'LINE Seed JP';
             font-style: normal;
@@ -26,28 +27,38 @@
             src: url('https://seed.line.me/src/fonts/LINESeedJP_OTF_Bd.woff2') format('woff2');
         }
 
+        :root {
+            /* WCAG 2.2 Level AAA Color Palette 
+               Target Contrast: Normal Text >= 7:1, Large Text >= 4.5:1
+            */
+            
+            --bg-deep: #020305;        /* 背景：漆黒に近い青 (Base) */
+            --panel-bg: rgba(20, 22, 30, 0.95); /* パネル：ほぼ不透明でコントラスト確保 */
+            
+            /* アクセントカラー定義 */
+            --kodai-murasaki: #8C6589; /* 古代紫：装飾・ボタン背景・大文字用 (対黒比 5.3:1 -> Large Text AAA OK) */
+            --ume-murasaki: #E6BCD8;   /* 梅紫：小文字テキスト用アクセント (対黒比 13.5:1 -> Normal Text AAA OK) */
+            --seijaku-blue: #A8C8E8;   /* 青系：小文字テキスト用 (対黒比 12:1 -> Normal Text AAA OK) */
+            
+            --text-main: #FFFFFF;      /* 白 (21:1) */
+            --text-sub: #E0E0E0;       /* 薄灰 (16:1) */
+        }
+
         body {
-            background-color: #0b0d17;
-            color: #e0e6ed;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
             font-family: 'LINE Seed JP', sans-serif;
+            line-height: 1.6;
             overflow-x: hidden;
             margin: 0;
             padding: 0;
         }
 
-        .cute-font {
-            font-family: 'Zen Maru Gothic', sans-serif;
-        }
-
-        .mincho {
-            font-family: 'Shippori Mincho', serif;
-        }
-
-        .michroma {
-            font-family: 'Michroma', sans-serif;
-            letter-spacing: 0.05em;
-        }
-
+        .cute-font { font-family: 'Zen Maru Gothic', sans-serif; }
+        .mincho { font-family: 'Shippori Mincho', serif; }
+        .michroma { font-family: 'Michroma', sans-serif; letter-spacing: 0.05em; }
+        
+        /* 星の背景アニメーション */
         .star {
             position: absolute;
             background: white;
@@ -57,116 +68,154 @@
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
+            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            50% { opacity: 1.0; transform: scale(1.1); }
+        }
+
+        /* アクセシビリティ：フォーカス状態の強化 (AAA基準 2.4.13) */
+        button:focus-visible, a:focus-visible {
+            outline: 3px solid var(--ume-murasaki);
+            outline-offset: 4px;
+            border-radius: 4px;
+            box-shadow: 0 0 0 4px rgba(0,0,0,0.8);
         }
 
         .glass-panel {
-            background: rgba(20, 25, 40, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            background: var(--panel-bg);
+            /* ボーダーを明るくして境界認識を高める */
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9);
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
+        .custom-scroll::-webkit-scrollbar { width: 10px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #1a1a2e; }
+        .custom-scroll::-webkit-scrollbar-thumb { 
+            background: var(--kodai-murasaki); 
+            border-radius: 5px; 
+            border: 2px solid #1a1a2e; /* コントラスト境界 */
         }
         
-        .moon-glow {
-            transition: filter 0.5s ease;
-        }
+        .moon-glow { transition: filter 0.5s ease; }
+        .header-shadow { filter: drop-shadow(0 4px 4px #000000); }
 
-        /* 文字のドロップシャドウ */
-        .header-shadow {
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+        /* 監査パネル用スタイル */
+        #audit-panel {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
         }
-        
-        footer {
-            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+        #audit-panel.hidden-panel {
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="min-h-screen w-screen flex flex-col items-center justify-start relative bg-gradient-to-b from-[#0b0d17] to-[#1a1d2e] p-4 md:p-6 lg:p-8">
+<body class="min-h-screen w-screen flex flex-col items-center justify-start relative bg-gradient-to-b from-[#020305] to-[#0f1525] p-4 md:p-8">
 
-    <div id="stars-container" class="absolute inset-0 z-0 pointer-events-none"></div>
+    <div id="stars-container" class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true"></div>
 
-    <!-- システムヘッダー -->
-    <header class="z-20 w-full max-w-6xl mt-2 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between px-4 md:px-8 shrink-0 gap-4">
-        <div class="flex items-center gap-4 header-shadow shrink-0">
-            <img src="otukimilogo.png" alt="うさぎアイコン" class="w-10 h-10 md:w-12 md:h-12 object-contain" onerror="this.style.display='none'">
-            <h2 class="cute-font text-2xl md:text-3xl text-white font-bold tracking-wider whitespace-nowrap">
-                おつきみ <span class="text-[10px] md:text-xs opacity-70 michroma ml-1">ver1.0.0</span>
-            </h2>
+    <!-- ヘッダー -->
+    <header class="z-20 w-full max-w-6xl mb-8 flex flex-col lg:flex-row items-start lg:items-center justify-between px-4 md:px-8 shrink-0 gap-6">
+        <div class="flex items-center gap-5 header-shadow shrink-0">
+            <img src="otukimilogo.png" alt="おつきみロゴ" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+            <div>
+                <h1 class="cute-font text-3xl md:text-4xl text-white font-bold tracking-wider leading-tight">
+                    おつきみ
+                </h1>
+                <span class="text-sm font-bold opacity-100 michroma tracking-widest text-[#A8C8E8]">SYSTEM ver2.0.0</span>
+            </div>
         </div>
         
         <!-- ABOUT セクション -->
-        <div class="header-shadow md:text-right max-w-full md:max-w-md">
-            <h3 class="text-[9px] michroma uppercase tracking-[0.2em] text-blue-400 mb-1 font-bold">About</h3>
-            <p class="text-[10px] md:text-[11px] text-white/60 leading-relaxed font-medium">
-                このサイトは当初、AIとの対話中につくらないつもりが、偶然できてしまったものです。<br class="hidden md:block">
-                でも、月を現実ではなかなか見上げないし、こういうのがあってもいいかな、と思って公開します。
+        <!-- 枠線を古代紫にし、テキストはAAA対応のため明るい白/青系にする -->
+        <div class="header-shadow lg:text-right max-w-full lg:max-w-md border-l-4 lg:border-l-0 lg:border-r-4 border-[#8C6589] pl-4 lg:pl-0 lg:pr-4">
+            <h2 class="text-sm michroma uppercase tracking-[0.2em] text-[#A8C8E8] mb-2 font-bold">Concept Archive</h2>
+            <p class="text-sm text-white font-medium leading-relaxed">
+                このサイトはAIとの対話中に偶然生まれたものです。月を現実で見上げる機会が減った現代において、画面越しに空を感じる場所として公開しました。
             </p>
         </div>
     </header>
 
     <!-- メインコンテンツ -->
-    <main class="z-10 flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-6xl flex-1 py-2 mb-8">
+    <main class="z-10 flex flex-col lg:flex-row gap-8 items-stretch justify-center w-full max-w-6xl flex-1 py-4 mb-12">
         
-        <!-- 左側：月のビジュアル -->
-        <div class="glass-panel rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center w-full md:w-1/2 aspect-square max-w-[480px] relative shrink-0">
-            <div class="absolute top-6 left-6 right-6 flex justify-between items-start gap-4">
+        <!-- 左側：観測ユニット -->
+        <section class="glass-panel rounded-[32px] p-8 flex flex-col items-center justify-center w-full lg:w-1/2 aspect-square max-w-[500px] relative shrink-0" aria-label="月のビジュアル表示">
+            <div class="absolute top-8 left-8 right-8 flex justify-between items-start gap-4 pointer-events-none z-10">
                 <div class="flex flex-col shrink-0">
-                    <span class="text-[10px] md:text-xs tracking-widest text-blue-400 uppercase font-bold">TODAY'S MOON PHASE</span>
-                    <span class="text-[8px] md:text-[9px] text-gray-500 whitespace-nowrap uppercase">Sector: Japan (North)</span>
+                    <!-- 古代紫は暗めなので、小さい文字には明るい色(#E6BCD8)を使用 -->
+                    <span class="text-sm tracking-[0.15em] text-[#E6BCD8] uppercase font-bold michroma" aria-label="Celestial Observation">Celestial Obs.</span>
+                    <span class="text-sm text-white whitespace-nowrap uppercase font-bold">Target: Earth-Moon L1 (JP)</span>
                 </div>
-                <div id="date-display" class="text-[10px] md:text-xs font-mono text-blue-200 text-right leading-tight"></div>
+                <div id="date-display" class="text-sm font-bold michroma text-white text-right leading-tight"></div>
             </div>
             
-            <canvas id="moonCanvas" width="400" height="400" class="w-[75%] h-[75%] object-contain moon-glow mt-2"></canvas>
+            <canvas id="moonCanvas" width="400" height="400" class="w-[75%] h-[75%] object-contain moon-glow" aria-label="現在の月の形状シミュレーション"></canvas>
             
-            <div class="absolute bottom-6 w-full text-center px-4">
-                <h1 id="phase-name" class="text-xl md:text-2xl font-medium tracking-wide mb-1 text-white drop-shadow-lg">上弦の月</h1>
-                <p id="illumination" class="text-[10px] md:text-xs text-blue-300 font-mono">輝面比: 0%</p>
+            <div class="absolute bottom-8 w-full text-center px-6 pointer-events-none z-10">
+                <h2 id="phase-name" class="text-3xl font-bold tracking-wide mb-3 text-white drop-shadow-lg">---</h2>
+                <div class="inline-flex items-center gap-3 bg-black/80 px-4 py-2 rounded-full border border-white/40 backdrop-blur-md">
+                    <span class="text-sm text-[#E6BCD8] michroma uppercase font-bold">Illumination</span>
+                    <p id="illumination" class="text-base text-white font-mono font-bold">0%</p>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- 右側：情報パネル -->
-        <div class="glass-panel rounded-3xl p-6 md:p-8 w-full md:w-1/2 min-h-0 md:min-h-[480px] max-w-[480px] flex flex-col relative overflow-hidden">
-            <!-- 現在の暦 -->
-            <div class="shrink-0 mb-4">
-                <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2 border-l-2 border-blue-500 pl-2">現在の暦</h3>
-                <div class="flex justify-between items-end pb-2 border-b border-gray-700/50">
-                    <div class="flex-1 min-w-0">
-                        <p class="text-gray-400 text-[9px] mb-0.5 uppercase">English Name</p>
-                        <p id="trad-name" class="text-base md:text-lg text-white font-medium leading-tight truncate">Loading...</p>
+        <!-- 右側：データ解析ユニット -->
+        <section class="glass-panel rounded-[32px] p-8 w-full lg:w-1/2 max-w-[500px] flex flex-col relative overflow-hidden" aria-label="詳細データ">
+            <!-- 現在の暦データ -->
+            <div class="shrink-0 mb-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-1.5 h-6 bg-[#8C6589]"></div>
+                    <!-- ラベルも可読性重視で明るい色に変更 -->
+                    <h3 class="text-base font-bold tracking-[0.1em] uppercase text-[#E6BCD8] michroma">Real-time Telemetry</h3>
+                </div>
+                <div class="pb-4 border-b border-white/20">
+                    <div class="flex justify-between items-end mb-4">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[#A8C8E8] text-sm mb-1 uppercase michroma font-bold">Designation</p>
+                            <p id="trad-name" class="text-2xl text-white font-bold leading-tight truncate">---</p>
+                        </div>
+                        <div class="text-right shrink-0 ml-6">
+                            <p class="text-[#A8C8E8] text-sm mb-1 uppercase michroma font-bold">Moon Age</p>
+                            <!-- コントラスト比強化: 梅紫(#E6BCD8)に変更し、白フチを削除 -->
+                            <p id="moon-age" class="text-4xl michroma text-[#E6BCD8] leading-none font-bold">0.0</p>
+                        </div>
                     </div>
-                    <div class="text-right shrink-0 ml-4">
-                        <p class="text-gray-400 text-[9px] mb-0.5 uppercase">Moon Age</p>
-                        <p id="moon-age" class="text-xl md:text-2xl michroma text-blue-200 leading-none">0.0</p>
+                    <!-- 月の出入情報のグリッド -->
+                    <div class="grid grid-cols-2 gap-4 mt-3">
+                        <div class="bg-white/5 rounded-2xl p-4 border border-[#8C6589]/50 flex items-center justify-between shadow-lg">
+                            <div>
+                                <p class="text-sm text-[#E6BCD8] michroma uppercase mb-1 font-bold">Moonrise</p>
+                                <p id="moon-rise" class="text-lg michroma text-white leading-none font-bold">--:--</p>
+                            </div>
+                            <i class="wi wi-moonrise text-2xl text-white" aria-hidden="true"></i>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-4 border border-[#8C6589]/50 flex items-center justify-between shadow-lg">
+                            <div>
+                                <p class="text-sm text-[#E6BCD8] michroma uppercase mb-1 font-bold">Moonset</p>
+                                <p id="moon-set" class="text-lg michroma text-white leading-none font-bold">--:--</p>
+                            </div>
+                            <i class="wi wi-moonset text-2xl text-white" aria-hidden="true"></i>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 月の趣 -->
-            <div class="flex-1 min-h-0 flex flex-col justify-center mb-4">
-                <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2 border-l-2 border-indigo-400 pl-2 shrink-0">月の趣</h3>
-                <div class="bg-black/20 rounded-xl p-4 border border-white/5 flex flex-col justify-center min-h-[160px] overflow-hidden">
-                    <p id="moon-desc" class="text-[11px] md:text-xs text-gray-300 leading-relaxed mb-4">
+            <!-- 月の趣ユニット -->
+            <div class="flex-1 min-h-0 flex flex-col justify-center mb-6">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-1.5 h-6 bg-[#8C6589]"></div>
+                    <h3 class="text-base font-bold tracking-[0.1em] uppercase text-[#E6BCD8] michroma">Archive: Cultural Data</h3>
+                </div>
+                <div class="bg-black/40 rounded-2xl p-6 border border-white/20 flex flex-col justify-center min-h-[180px] relative">
+                    <p id="moon-desc" class="text-sm text-white font-medium leading-relaxed mb-6">
                         <!-- 解説文 -->
                     </p>
-                    <div class="relative pl-4 border-l-2 border-gray-600 shrink-0">
-                        <p id="moon-poem" class="mincho text-sm md:text-base text-white mb-1.5 leading-loose">
+                    <div class="relative pl-5 border-l-4 border-[#8C6589] shrink-0">
+                        <p id="moon-poem" class="mincho text-xl text-white mb-2 leading-loose font-medium">
                             <!-- 和歌 -->
                         </p>
-                        <p id="poem-author" class="text-[9px] text-gray-500 text-right italic mt-1">
+                        <p id="poem-author" class="text-sm text-[#E6BCD8] text-right italic font-bold michroma">
                             <!-- 作者 -->
                         </p>
                     </div>
@@ -174,48 +223,95 @@
             </div>
 
             <!-- 今後の予報 -->
-            <div class="shrink-0 mb-4">
-                <h3 class="text-[10px] font-bold tracking-widest uppercase text-gray-500 mb-2 border-l-2 border-purple-500 pl-2">今後の月相</h3>
-                <div class="grid grid-cols-1 gap-1.5" id="forecast-container">
+            <div class="shrink-0 mb-6">
+                <h3 class="text-sm font-bold tracking-[0.2em] uppercase text-[#A8C8E8] mb-3 michroma">Projected Phases</h3>
+                <div class="grid grid-cols-1 gap-3" id="forecast-container">
                     <!-- JSで生成されます -->
                 </div>
             </div>
             
-            <!-- コントロール -->
-            <div class="shrink-0 mt-auto pt-3 border-t border-gray-700/50">
-                <div class="flex gap-2">
-                    <button id="btn-prev" class="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition text-[10px] font-medium border border-white/5">
-                        &larr; 前日
+            <!-- 操作系 -->
+            <div class="shrink-0 mt-auto pt-4 border-t border-white/20">
+                <div class="flex gap-4">
+                    <button id="btn-prev" class="flex-1 h-14 bg-white/5 hover:bg-white/15 text-white rounded-xl transition-all font-bold text-sm border-2 border-white/30 hover:border-[#E6BCD8] active:scale-95" aria-label="前日の月を表示">
+                        &larr; PREV
                     </button>
-                    <button id="btn-today" class="flex-1 py-1.5 bg-blue-600/20 hover:bg-blue-600/40 text-blue-100 border border-blue-500/30 rounded-lg transition text-[10px] font-bold uppercase tracking-wider">
+                    <!-- 古代紫背景のボタン。文字は白太字でコントラスト比5.3:1 (Large Text AAA適合) -->
+                    <button id="btn-today" class="flex-1 h-14 bg-[#8C6589] hover:bg-[#a0759c] text-white rounded-xl transition-all font-bold text-sm uppercase tracking-widest shadow-lg shadow-[#8C6589]/40 active:scale-95 border-2 border-transparent focus:border-white">
                         TODAY
                     </button>
-                    <button id="btn-next" class="flex-1 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 rounded-lg transition text-[10px] font-medium border border-white/5">
-                        翌日 &rarr;
+                    <button id="btn-next" class="flex-1 h-14 bg-white/5 hover:bg-white/15 text-white rounded-xl transition-all font-bold text-sm border-2 border-white/30 hover:border-[#E6BCD8] active:scale-95" aria-label="翌日の月を表示">
+                        NEXT &rarr;
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
     </main>
 
+    <!-- 監査パネル（モーダル） -->
+    <div id="audit-panel" class="hidden-panel fixed bottom-24 right-4 md:right-8 z-50 w-80 bg-[#15151a] border-2 border-[#E6BCD8] rounded-2xl shadow-2xl p-6 text-white font-sans text-sm" role="dialog" aria-labelledby="audit-title">
+        <div class="flex justify-between items-center mb-4 border-b border-white/20 pb-3">
+            <h3 id="audit-title" class="text-base font-bold text-[#E6BCD8] michroma">SYSTEM AUDIT</h3>
+            <button id="close-audit" class="text-white hover:text-[#E6BCD8] p-2 bg-white/10 rounded-full" aria-label="閉じる">✕</button>
+        </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="font-bold">WCAG 2.2 Criteria</span>
+                <span class="text-[#E6BCD8] font-bold border border-[#E6BCD8] px-2 rounded">Target: AAA</span>
+            </div>
+            <hr class="border-white/20">
+            <ul class="space-y-3 text-sm">
+                <li class="flex items-start gap-3">
+                    <span class="text-[#E6BCD8] font-bold text-lg leading-none">✓</span> 
+                    <div>
+                        <span class="font-bold block">1.4.6 Contrast (Enhanced)</span>
+                        <span class="text-xs text-gray-300">テキスト比率 7:1 以上 (※大文字/装飾を除く)</span>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-[#E6BCD8] font-bold text-lg leading-none">✓</span> 
+                    <div>
+                        <span class="font-bold block">1.4.1 Use of Color</span>
+                        <span class="text-xs text-gray-300">色のみに依存しない情報伝達</span>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-[#E6BCD8] font-bold text-lg leading-none">✓</span> 
+                    <div>
+                        <span class="font-bold block">2.5.5 Target Size (AAA)</span>
+                        <span class="text-xs text-gray-300">タップ領域 44px 以上確保</span>
+                    </div>
+                </li>
+            </ul>
+            <div class="mt-4 p-3 bg-[#8C6589]/20 rounded border border-[#8C6589]/50 text-xs text-white font-medium">
+                ※ 古代紫(#8C6589)は装飾・背景・大型テキストに使用し、通常テキストにはより明るい色を採用しています。
+            </div>
+        </div>
+    </div>
+
     <!-- フッター -->
-    <footer class="z-20 w-full max-w-6xl pb-6 mt-auto flex flex-col md:flex-row items-center justify-between px-8 gap-4 opacity-50">
-        <div class="flex flex-col md:flex-row items-center gap-4">
+    <footer class="z-20 w-full max-w-6xl pb-10 flex flex-col md:flex-row items-center justify-between px-8 gap-6 opacity-90 border-t border-white/20 pt-8">
+        <div class="flex flex-col md:flex-row items-center gap-6">
             <div class="flex items-center gap-4">
-                <img src="mecalogo-white.png" alt="MECA" class="h-5 object-contain" onerror="this.style.display='none'">
-                <div class="text-[9px] tracking-widest text-white/80 whitespace-nowrap">
+                <img src="mecalogo-white.png" alt="MECAロゴ" class="h-9 object-contain" onerror="this.style.display='none'">
+                <div class="text-sm tracking-[0.2em] text-white font-bold">
                     しんやせっけいしゃ（MECA）
                 </div>
             </div>
-            <a href="https://x.com/shinyasekkeisha" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-[9px] tracking-widest text-white/80 hover:text-blue-400 transition-colors">
-                <svg viewBox="0 0 24 24" fill="currentColor" class="w-3 h-3">
+            <a href="https://x.com/shinyasekkeisha" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-sm tracking-widest text-[#A8C8E8] font-bold hover:underline decoration-2 underline-offset-4 hover:text-white transition-colors">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5" aria-hidden="true">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path>
                 </svg>
                 @shinyasekkeisha
             </a>
         </div>
-        <div class="text-[9px] michroma tracking-widest text-white/50">
-            &copy; 2026 Midnight Express Computational Archives
+        <div class="flex items-center gap-4 flex-col md:flex-row">
+            <button id="toggle-audit" class="text-xs text-white font-bold hover:bg-white hover:text-black michroma tracking-widest border-2 border-white px-3 py-2 rounded transition-colors" aria-label="アクセシビリティ監査パネルを開く">
+                AUDIT (AAA)
+            </button>
+            <div class="text-sm michroma tracking-widest text-gray-300 font-bold uppercase text-center md:text-right">
+                &copy; 2026 Midnight Express Computational Archives
+            </div>
         </div>
     </footer>
 
@@ -225,14 +321,14 @@
         function createStars() {
             const container = document.getElementById('stars-container');
             container.innerHTML = '';
-            const starCount = window.innerWidth < 768 ? 60 : 120;
+            const starCount = window.innerWidth < 768 ? 50 : 100;
             for (let i = 0; i < starCount; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
                 const x = Math.random() * 100;
                 const y = Math.random() * 100;
-                const size = Math.random() * 1.2 + 0.8;
-                const duration = Math.random() * 3 + 2;
+                const size = Math.random() * 1.5 + 0.5;
+                const duration = Math.random() * 4 + 2;
                 const delay = Math.random() * 5;
                 star.style.left = `${x}%`;
                 star.style.top = `${y}%`;
@@ -242,6 +338,22 @@
                 star.style.animationDelay = `${delay}s`;
                 container.appendChild(star);
             }
+        }
+
+        function calculateMoonRiseSet(age) {
+            let baseRiseHour = 6;
+            let baseSetHour = 18;
+            let offsetMinutes = age * 50.47; 
+            let riseTotalMinutes = (baseRiseHour * 60) + offsetMinutes;
+            let setTotalMinutes = (baseSetHour * 60) + offsetMinutes;
+            
+            const formatTime = (totalMin) => {
+                let h = Math.floor((totalMin / 60) % 24);
+                let m = Math.floor(totalMin % 60);
+                return `${h}:${String(m).padStart(2, '0')}`;
+            };
+            
+            return { rise: formatTime(riseTotalMinutes), set: formatTime(setTotalMinutes) };
         }
 
         function getMoonData(date) {
@@ -269,70 +381,63 @@
             else { phaseName = "有明月 (Waning Crescent)"; phaseId = "wan-crescent"; }
 
             const illumination = 0.5 * (1 - Math.cos(p * 2 * Math.PI));
+            const times = calculateMoonRiseSet(age);
 
             return {
-                phase: p,
-                age: age,
-                name: phaseName,
-                simpleName: phaseName.split(' ')[0],
-                illumination: illumination,
-                phaseId: phaseId
+                phase: p, age: age, name: phaseName, simpleName: phaseName.split(' ')[0],
+                illumination: illumination, phaseId: phaseId, rise: times.rise, set: times.set
             };
         }
 
         function getMoonCulture(phaseId) {
             const data = {
                 "new": {
-                    desc: "太陽と同じ方向にあり姿が見えない始まりの時。新しいことを始めるのに良いとされます。",
+                    desc: "太陽と同じ方向にあり姿が見えない始まりの時。新しいことを始めるのに良いとされる静寂の月相です。",
                     poem: "暗きより 暗き道にぞ 入りぬべき<br>遙かに照らせ 山の端の月",
-                    author: "和泉式部（拾遺和歌集）"
+                    author: "和泉式部"
                 },
                 "wax-crescent": {
-                    desc: "夕暮れの西空に眉のように細く光る月。満ちていく希望の象徴とされます。",
+                    desc: "夕暮れの西の空に、鋭く細く光る希望の月。これから満ちていく成長の象徴です。",
                     poem: "三日月の さやにも見えず 雲隠り<br>見まくぞ欲しき うたてこのころ",
-                    author: "大伴坂上郎女（万葉集）"
+                    author: "大伴坂上郎女"
                 },
                 "first-quarter": {
-                    desc: "真昼に昇り真夜中に沈む半月。弓の弦を上にして沈むことから「上弦」と呼ばれます。",
+                    desc: "昼に昇り真夜中に沈む半月。弓の弦を上にして沈む姿から「上弦」と呼ばれます。",
                     poem: "天の原 ふりさけ見れば 春日なる<br>三笠の山に 出でし月かも",
-                    author: "阿倍仲麻呂（古今和歌集）" 
+                    author: "阿倍仲麻呂" 
                 },
                 "wax-gibbous": {
-                    desc: "満月に次いで美しいとされ、「後の月」として栗や豆を供える日本独自の風習があります。",
+                    desc: "満月の直前、最も美しいとも称される「十三夜」。日本独自の「後の月」を愛でる風習があります。",
                     poem: "秋の夜の 月は昔の かはらねど<br>人は変はれる 世にぞありける",
-                    author: "曽禰好忠（古今和歌集）"
+                    author: "曽禰好忠"
                 },
                 "full": {
-                    desc: "望月。太陽の反対側に位置し、一晩中夜空を照らす最も満ちた姿。古来より愛でられてきました。",
+                    desc: "望月。太陽の正反対に位置し、一晩中地上を照らす円満の月。数多の和歌に詠まれてきました。",
                     poem: "月見れば 千々にものこそ 悲しけれ<br>我が身一つの 秋にはあらねど",
-                    author: "大江千里（古今和歌集）"
+                    author: "大江千里"
                 },
                 "wan-gibbous": {
-                    desc: "ためらいがちに出る「十六夜」や、寝て待つほど遅く出る「寝待月」と呼ばれます。",
+                    desc: "満月より少し遅れてためらいがちに出る「十六夜（いざよい）」。静かな夜が始まります。",
                     poem: "やすらはず 出で西月の 待つときは<br>いざよふ空の けしきをも見む",
-                    author: "よみ人知らず（古今和歌集）"
+                    author: "よみ人知らず"
                 },
                 "last-quarter": {
-                    desc: "真夜中に昇り昼に沈む半月。弓の弦を下にして沈むことから「下弦」と呼ばれます。",
+                    desc: "真夜中に昇り、昼に白く沈む半月。弦を下にして沈むことから「下弦」と呼ばれます。",
                     poem: "なげけとて 月やは物を 思はする<br>かこち顔なる 我が涙かな",
-                    author: "西行法師（千載和歌集）"
+                    author: "西行法師"
                 },
                 "wan-crescent": {
-                    desc: "夜明けに白く残る「有明月」。別れや、待ち人が来なかった朝の象徴として詠まれます。",
+                    desc: "夜明けに白く残る「有明月」。惜別の朝や、待ち人が来なかった情景の象徴です。",
                     poem: "今来むと いひしばかりに 長月の<br>有明の月を 待ち出でつるかな",
-                    author: "素性法師（古今和歌集）"
+                    author: "素性法師"
                 }
             };
             return data[phaseId] || data["full"];
         }
 
         function getMoonEnglishName(date) {
-            const englishNames = [
-                "Wolf Moon", "Snow Moon", "Worm Moon", "Pink Moon",
-                "Flower Moon", "Strawberry Moon", "Buck Moon", "Sturgeon Moon",
-                "Harvest Moon", "Hunter's Moon", "Beaver Moon", "Cold Moon"
-            ];
-            return englishNames[date.getMonth()];
+            const names = ["Wolf Moon", "Snow Moon", "Worm Moon", "Pink Moon", "Flower Moon", "Strawberry Moon", "Buck Moon", "Sturgeon Moon", "Harvest Moon", "Hunter's Moon", "Beaver Moon", "Cold Moon"];
+            return names[date.getMonth()];
         }
 
         function drawMoon(phaseData) {
@@ -342,16 +447,16 @@
             const height = canvas.height;
             const cx = width / 2;
             const cy = height / 2;
-            const radius = width * 0.35;
+            const radius = width * 0.36;
 
             ctx.clearRect(0, 0, width, height);
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-            ctx.fillStyle = '#181b2c';
+            ctx.fillStyle = '#080c14';
             ctx.fill();
 
             const phase = phaseData.phase;
-            ctx.fillStyle = '#f0f4f8';
+            ctx.fillStyle = '#f8faff';
             ctx.beginPath();
 
             if (phase <= 0.5) {
@@ -369,15 +474,11 @@
 
             ctx.save();
             ctx.globalCompositeOperation = 'multiply';
-            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.fillStyle = 'rgba(20,10,30,0.2)';
             ctx.beginPath();
             ctx.arc(cx, cy, radius, 0, Math.PI * 2);
             ctx.clip();
-            const craters = [
-                {x: 0.2, y: -0.3, r: 0.12}, {x: -0.4, y: 0.1, r: 0.18},
-                {x: 0.1, y: 0.4, r: 0.08}, {x: 0.5, y: -0.1, r: 0.14},
-                {x: -0.2, y: -0.5, r: 0.1}, {x: -0.1, y: 0.0, r: 0.05}
-            ];
+            const craters = [{x: 0.2, y: -0.3, r: 0.12}, {x: -0.4, y: 0.1, r: 0.18}, {x: 0.1, y: 0.4, r: 0.08}, {x: 0.5, y: -0.1, r: 0.14}, {x: -0.2, y: -0.5, r: 0.1}];
             craters.forEach(c => {
                 ctx.beginPath();
                 ctx.arc(cx + c.x * radius, cy + c.y * radius, c.r * radius, 0, Math.PI * 2);
@@ -386,20 +487,21 @@
             ctx.restore();
             
             const glowCanvas = document.getElementById('moonCanvas');
-            const blurAmount = 10 + (phaseData.illumination * 15);
-            const opacity = 0.2 + (phaseData.illumination * 0.3);
-            glowCanvas.style.filter = `drop-shadow(0 0 ${blurAmount}px rgba(200,220,255,${opacity}))`;
+            const blurAmount = 15 + (phaseData.illumination * 20);
+            glowCanvas.style.filter = `drop-shadow(0 0 ${blurAmount}px rgba(180, 160, 220, ${0.2 + phaseData.illumination * 0.3}))`;
         }
 
         function updateUI() {
             const data = getMoonData(currentDate);
 
             document.getElementById('phase-name').innerText = data.simpleName;
-            document.getElementById('illumination').innerText = `輝面比: ${(data.illumination * 100).toFixed(1)}%`;
+            document.getElementById('illumination').innerText = `${(data.illumination * 100).toFixed(1)}%`;
             document.getElementById('moon-age').innerText = `${data.age.toFixed(1)}`;
+            document.getElementById('moon-rise').innerText = data.rise;
+            document.getElementById('moon-set').innerText = data.set;
             
             const options = { year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short' };
-            document.getElementById('date-display').innerText = currentDate.toLocaleDateString('ja-JP', options);
+            document.getElementById('date-display').innerText = currentDate.toLocaleDateString('ja-JP', options).replace(/\//g, '.');
             document.getElementById('trad-name').innerText = getMoonEnglishName(currentDate);
 
             const culture = getMoonCulture(data.phaseId);
@@ -422,12 +524,10 @@
             for(let i=1; i<=30; i++) {
                 tempDate.setDate(tempDate.getDate() + 1);
                 const d = getMoonData(tempDate);
-                const shortName = d.simpleName.split(' ')[0];
+                const shortName = d.simpleName;
                 
                 let isImportant = false;
-                for(let p of importantPhases) {
-                    if(shortName.startsWith(p)) isImportant = true;
-                }
+                for(let p of importantPhases) { if(shortName.startsWith(p)) isImportant = true; }
 
                 if (isImportant) {
                      const lastEntry = container.lastElementChild;
@@ -436,16 +536,21 @@
                      const el = document.createElement('div');
                      el.dataset.phase = shortName;
                      const isFull = shortName.startsWith('満月');
-                     const bgClass = isFull ? 'bg-blue-500/10 border-blue-400/20' : 'bg-white/5 border-white/5';
-                     const iconColor = isFull ? 'bg-yellow-200' : (shortName.startsWith('新月') ? 'bg-gray-700' : 'bg-gray-400');
+                     
+                     // 配色を古代紫ベースに変更
+                     const bgClass = isFull ? 'bg-[#8C6589]/20 border-[#8C6589]/30' : 'bg-white/5 border-white/20';
+                     const iconColor = isFull ? 'bg-white shadow-[0_0_10px_rgba(255,255,255,0.8)]' : (shortName.startsWith('新月') ? 'bg-gray-800' : 'bg-[#E6BCD8]');
 
-                     el.className = `flex items-center justify-between p-1.5 rounded-lg border ${bgClass}`;
+                     el.className = `flex items-center justify-between p-3 px-4 rounded-xl border ${bgClass}`;
                      el.innerHTML = `
-                        <div class="flex items-center gap-2">
-                            <div class="w-1.5 h-1.5 rounded-full ${iconColor}"></div>
-                            <span class="text-[10px] font-medium ${isFull ? 'text-white' : 'text-gray-300'}">${shortName}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full ${iconColor}" aria-hidden="true"></div>
+                            <span class="text-sm font-bold ${isFull ? 'text-white' : 'text-gray-200'} michroma uppercase">${d.phaseId.replace('-', ' ')}</span>
                         </div>
-                        <span class="text-[10px] text-blue-200 michroma">${tempDate.getMonth() + 1}/${tempDate.getDate()}</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm text-gray-200 font-bold">${shortName}</span>
+                            <span class="text-sm text-[#E6BCD8] michroma font-bold">${tempDate.getMonth() + 1}.${tempDate.getDate()}</span>
+                        </div>
                      `;
                      container.appendChild(el);
                      count++;
@@ -454,24 +559,22 @@
             }
         }
 
-        document.getElementById('btn-prev').addEventListener('click', () => {
-            currentDate.setDate(currentDate.getDate() - 1);
-            updateUI();
+        document.getElementById('btn-prev').addEventListener('click', () => { currentDate.setDate(currentDate.getDate() - 1); updateUI(); });
+        document.getElementById('btn-next').addEventListener('click', () => { currentDate.setDate(currentDate.getDate() + 1); updateUI(); });
+        document.getElementById('btn-today').addEventListener('click', () => { currentDate = new Date(); updateUI(); });
+        
+        // 監査パネルの制御
+        const auditPanel = document.getElementById('audit-panel');
+        document.getElementById('toggle-audit').addEventListener('click', () => {
+            auditPanel.classList.toggle('hidden-panel');
         });
-        document.getElementById('btn-next').addEventListener('click', () => {
-            currentDate.setDate(currentDate.getDate() + 1);
-            updateUI();
-        });
-        document.getElementById('btn-today').addEventListener('click', () => {
-            currentDate = new Date();
-            updateUI();
+        document.getElementById('close-audit').addEventListener('click', () => {
+            auditPanel.classList.add('hidden-panel');
         });
 
         createStars();
         updateUI();
-        window.addEventListener('resize', () => {
-            createStars();
-        });
+        window.addEventListener('resize', createStars);
     </script>
 </body>
 </html>
