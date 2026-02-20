@@ -23,6 +23,10 @@
             
             /* フォーカス色（デジタル庁DS推奨の青系） */
             --focus-color: #0b5cab;
+
+            /* 動的なテーマカラー変数 */
+            --theme-bg-color: #f4f1ea;
+            --theme-text-color: #111111;
         }
 
         body {
@@ -64,18 +68,40 @@
         .theme-day {
             background-color: #f4f1ea; 
             color: #111111; 
+            --theme-bg-color: #f4f1ea;
+            --theme-text-color: #111111;
         }
         .theme-night {
             background-color: #111111; 
             color: #ffffff;
+            --theme-bg-color: #111111;
+            --theme-text-color: #ffffff;
         }
         .theme-dawn {
             background: linear-gradient(to bottom, #dbeafe, #ffedd5); 
             color: #111111;
+            --theme-bg-color: #ffedd5; /* グラデーションの終点色をボタン背景のベースに */
+            --theme-text-color: #111111;
         }
         .theme-dusk {
             background: linear-gradient(to bottom, #1e3a8a, #7f1d1d); 
             color: #ffffff;
+            --theme-bg-color: #7f1d1d; /* グラデーションの終点色をボタン背景のベースに */
+            --theme-text-color: #ffffff;
+        }
+
+        /* 汎用ボタンのホバースタイル */
+        .btn-hover-theme:hover {
+            background-color: var(--theme-text-color);
+            color: var(--theme-bg-color);
+            border-color: var(--theme-text-color);
+        }
+
+        /* 環境音ボタンのON状態スタイル */
+        .btn-active-theme {
+            background-color: var(--theme-text-color) !important;
+            color: var(--theme-bg-color) !important;
+            border-color: var(--theme-text-color) !important;
         }
 
         .fade-in { animation: fadeIn 1.5s ease-in-out; }
@@ -90,19 +116,12 @@
             backdrop-filter: blur(4px);
         }
         
-        /* ロゴマスク (白画像を古代紫に変換) */
-        .logo-mask {
-            background-color: var(--color-kodaidmurasaki);
-            mask-image: url('mecalogo-white.png');
-            -webkit-mask-image: url('mecalogo-white.png');
-            mask-size: contain;
-            -webkit-mask-size: contain;
-            mask-repeat: no-repeat;
-            -webkit-mask-repeat: no-repeat;
-            mask-position: center;
-            -webkit-mask-position: center;
-            width: 240px;
-            height: 60px;
+        /* ロゴ画像用のスタイル (明るいテーマの時は黒く反転して視認させる) */
+        .meca-logo {
+            transition: filter 2s ease;
+        }
+        .theme-day .meca-logo, .theme-dawn .meca-logo {
+            filter: invert(1);
         }
     </style>
 </head>
@@ -197,24 +216,24 @@
                 
                 <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
                     <!-- 位置情報 -->
-                    <button onclick="requestLocation()" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2">
+                    <button onclick="requestLocation()" class="btn-hover-theme touch-target text-[13px] md:text-[14px] font-bold transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2">
                         <i data-lucide="navigation" class="w-4 h-4"></i>
                         現在地
                     </button>
                     
                     <!-- 【展開3】環境音（アンビエント）トグル -->
-                    <button onclick="toggleAmbientSound()" id="btn-ambient" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2" aria-pressed="false">
+                    <button onclick="toggleAmbientSound()" id="btn-ambient" class="btn-hover-theme touch-target text-[13px] md:text-[14px] font-bold transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2" aria-pressed="false">
                         <i data-lucide="volume-x" id="ambient-icon" class="w-4 h-4"></i>
                         <span id="ambient-text">環境音: 靜寂</span>
                     </button>
 
                     <!-- 【展開4】日没通知（PWA的要素） -->
-                    <button onclick="requestNotification()" id="btn-notify" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2">
+                    <button onclick="requestNotification()" id="btn-notify" class="btn-hover-theme touch-target text-[13px] md:text-[14px] font-bold transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2">
                         <i data-lucide="bell" id="notify-icon" class="w-4 h-4"></i>
                         通知設定
                     </button>
 
-                    <a href="https://meca611.github.io/tools/otukimi/index.html" target="_blank" rel="noopener noreferrer" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2" aria-label="月齢カレンダー「おつきみ」を新しいタブで開く">
+                    <a href="https://meca611.github.io/tools/otukimi/index.html" target="_blank" rel="noopener noreferrer" class="btn-hover-theme touch-target text-[13px] md:text-[14px] font-bold transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2" aria-label="月齢カレンダー「おつきみ」を新しいタブで開く">
                         <i data-lucide="moon" class="w-4 h-4"></i>
                         おつきみ
                     </a>
@@ -228,7 +247,7 @@
                             <i data-lucide="feather" class="w-5 h-5"></i>
                             文豪の独り言
                         </h3>
-                        <button onclick="generateMonologue()" id="btn-generate" class="touch-target w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-current rounded-full hover:bg-current hover:text-white transition-all font-bold text-[14px] shadow-sm">
+                        <button onclick="generateMonologue()" id="btn-generate" class="btn-hover-theme touch-target w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-current rounded-full transition-all font-bold text-[14px] shadow-sm">
                             <span>✨ 今の心境を窺う</span>
                         </button>
                     </div>
@@ -248,10 +267,10 @@
         </div>
     </main>
 
-    <!-- MECA ロゴ フッター (古代紫・白画像マスク) -->
-    <footer class="absolute bottom-0 left-0 w-full py-6 px-4 flex flex-col items-center justify-center z-20 bg-[#f4f1ea] text-[#111111] border-t border-gray-300">
-        <div class="mb-3 flex items-center justify-center" aria-label="MECA Midnight Express Computational Archives ロゴ">
-            <div class="logo-mask"></div>
+    <!-- MECA ロゴ フッター (背景色なし、ロゴ画像をそのまま配置) -->
+    <footer class="absolute bottom-0 left-0 w-full py-6 px-4 flex flex-col items-center justify-center z-20 opacity-90">
+        <div class="mb-3 flex items-center justify-center">
+            <img src="mecalogo-white.png" alt="MECA Midnight Express Computational Archives" class="meca-logo w-48 md:w-56 h-auto">
         </div>
         <p class="text-[13px] md:text-[14px] font-bold mb-1">しんやせっけいしゃ（MECA）</p>
         <p class="text-[11px] md:text-[12px] opacity-80">&copy; 2026 Midnight Express Computational Archives</p>
@@ -431,7 +450,7 @@
                 btn.setAttribute('aria-pressed', 'true');
                 icon.setAttribute('data-lucide', 'volume-2');
                 text.textContent = "環境音: 奏鳴";
-                btn.classList.add('bg-current', 'text-white'); // UD的にON状態を強調
+                btn.classList.add('btn-active-theme'); // テーマ色に合わせたアクティブ状態
             }
             lucide.createIcons();
         }
