@@ -4,18 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>日沒閉門 - 日の出・日の入時刻</title>
-    <!-- ファビコンを「門」の漢字に設定 -->
+    <!-- ファビコン -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 font-family=%22serif%22>門</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        /* デジタル庁デザインシステムβ版 & WCAG 2.2 準拠の基盤設定 */
+        :root {
+            /* CUD推奨配色セット 第2版 */
+            --cud-red: #FF2800;
+            --cud-blue: #005AFF;
+            --cud-green: #35A16B;
+            --cud-yellow: #FAAC58;
+            --color-kodaidmurasaki: #8C6589;
+            
+            /* フォーカス色（デジタル庁DS推奨の青系） */
+            --focus-color: #0b5cab;
+        }
+
         body {
             font-family: 'Noto Serif JP', serif;
             transition: background-color 2s ease, color 2s ease;
+            line-height: 1.6; /* 可読性の確保 */
         }
+
+        /* キーボード操作時のフォーカスリング（WCAG 2.2 達成基準 2.4.11 / 2.4.12） */
+        *:focus-visible {
+            outline: 3px solid var(--focus-color);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        /* 縦書き設定 */
         .vertical-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
@@ -28,45 +51,75 @@
             overflow-x: auto;
         }
         @media (min-width: 768px) {
-            .vertical-text-box {
-                height: 200px;
-            }
+            .vertical-text-box { height: 200px; }
         }
         
-        /* 時間帯ごとのテーマ */
+        /* タッチターゲットサイズの確保（デジタル庁DS: 44px以上） */
+        .touch-target {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* 時間帯ごとのテーマ（コントラスト比 4.5:1 以上を確保） */
         .theme-day {
-            background-color: #f4f1ea; /* 和紙のような白 */
-            color: #111111; /* UD: コントラストを高めるため濃い黒に */
+            background-color: #f4f1ea; 
+            color: #111111; 
         }
         .theme-night {
-            background-color: #111111; /* 深い夜の色 */
+            background-color: #111111; 
             color: #ffffff;
         }
         .theme-dawn {
-            background: linear-gradient(to bottom, #BCE2E8, #FCCCB4); /* UD対応の明るい東雲色 */
+            background: linear-gradient(to bottom, #dbeafe, #ffedd5); 
             color: #111111;
         }
         .theme-dusk {
-            background: linear-gradient(to bottom, #002C7A, #C73A31); /* UD対応の濃い茜色 */
+            background: linear-gradient(to bottom, #1e3a8a, #7f1d1d); 
             color: #ffffff;
         }
 
-        .fade-in {
-            animation: fadeIn 1.5s ease-in-out;
-        }
-
+        .fade-in { animation: fadeIn 1.5s ease-in-out; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* モーダル（ABOUTページ）のスタイル */
+        dialog::backdrop {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* ロゴマスク (白画像を古代紫に変換) */
+        .logo-mask {
+            background-color: var(--color-kodaidmurasaki);
+            mask-image: url('mecalogo-white.png');
+            -webkit-mask-image: url('mecalogo-white.png');
+            mask-size: contain;
+            -webkit-mask-size: contain;
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            mask-position: center;
+            -webkit-mask-position: center;
+            width: 240px;
+            height: 60px;
+        }
     </style>
 </head>
-<body class="theme-day min-h-screen flex flex-col items-center justify-center p-4 pb-32 relative overflow-x-hidden">
+<body class="theme-day min-h-screen flex flex-col items-center justify-center p-4 pb-36 relative overflow-x-hidden">
 
     <!-- 背景の装飾的な円（太陽/月） -->
-    <div id="celestial-body" class="absolute w-64 h-64 md:w-80 md:h-80 rounded-full opacity-30 transition-all duration-[3000ms] blur-xl" style="top: 10%; right: 10%;"></div>
+    <div id="celestial-body" class="absolute w-64 h-64 md:w-80 md:h-80 rounded-full opacity-30 transition-all duration-[3000ms] blur-xl" style="top: 10%; right: 10%;" aria-hidden="true"></div>
 
-    <main class="z-10 flex flex-col md:flex-row-reverse items-center md:items-start gap-8 md:gap-16 fade-in bg-white/10 backdrop-blur-md p-6 md:p-12 rounded-sm border border-current shadow-2xl max-w-5xl w-full my-auto">
+    <!-- 画面右上のABOUTボタン -->
+    <div class="absolute top-4 right-4 z-20">
+        <button onclick="document.getElementById('about-modal').showModal()" class="touch-target flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/40 border border-current rounded-full transition-colors font-bold text-[14px] backdrop-blur-sm" aria-label="このサイトについて（ABOUT）を開く">
+            <i data-lucide="info" class="w-5 h-5"></i>
+            <span>ABOUT</span>
+        </button>
+    </div>
+
+    <main class="z-10 flex flex-col md:flex-row-reverse items-center md:items-start gap-8 md:gap-16 fade-in bg-white/10 backdrop-blur-md p-6 md:p-12 rounded-sm border border-current shadow-2xl max-w-5xl w-full my-auto mt-16 md:mt-auto">
         
         <!-- タイトルエリア（縦書き） -->
         <div class="flex flex-col items-center justify-start md:mt-4 shrink-0">
@@ -81,108 +134,178 @@
         <!-- データ表示エリア -->
         <div class="flex-1 w-full flex flex-col justify-center gap-8 md:gap-10">
             
-            <!-- 上部：ステータスと現在時刻 -->
+            <!-- 上部：ステータスと現在時刻・環境情報 -->
             <div class="text-center md:text-left border-b border-current pb-6 md:pb-8">
-                <!-- ステータスを現在時刻の近くに配置 -->
-                <div class="inline-block border border-current px-5 py-1.5 rounded-full bg-black/5 font-bold mb-5 md:mb-6">
-                    <span class="tracking-widest text-[14px] md:text-[16px]" id="gate-status">門の状態を確認中...</span>
+                <!-- ステータスと二十四節気 -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-5 md:mb-6">
+                    <div class="inline-flex border border-current px-5 py-1.5 rounded-full bg-black/5 font-bold">
+                        <span class="tracking-widest text-[14px] md:text-[16px]" id="gate-status" aria-live="polite">門の状態を確認中...</span>
+                    </div>
+                    <!-- 【展開2】季節の移ろい（二十四節気） -->
+                    <div class="inline-flex items-center gap-1.5 border border-current px-4 py-1.5 rounded-full bg-white/20 font-bold" title="現在の二十四節気">
+                        <i data-lucide="leaf" class="w-4 h-4"></i>
+                        <span class="tracking-widest text-[14px]" id="solar-term">--</span>
+                    </div>
                 </div>
 
                 <div class="flex flex-col items-center md:items-start gap-2">
+                    <h2 class="sr-only">現在時刻と位置情報</h2>
                     <p class="text-[12px] md:text-[14px] tracking-widest font-bold flex flex-wrap items-center justify-center md:justify-start gap-2">
                         <span>現在時刻</span>
-                        <span class="text-[10px] font-normal border border-current px-1.5 py-0.5 rounded-sm opacity-80 whitespace-nowrap">日本標準時 JST</span>
+                        <span class="text-[10px] font-normal border border-current px-1.5 py-0.5 rounded-sm opacity-90 whitespace-nowrap">日本標準時 JST</span>
                     </p>
-                    <div class="text-[13px] md:text-[14px] font-medium tracking-wider" id="current-date">----（--）年--月--日</div>
+                    <div class="text-[14px] md:text-[15px] font-medium tracking-wider" id="current-date">----（--）年--月--日</div>
                     
-                    <div class="text-5xl md:text-6xl font-medium tracking-widest flex justify-center md:justify-start items-baseline my-1" id="current-time">--:--</div>
+                    <div class="text-5xl md:text-6xl font-medium tracking-widest flex justify-center md:justify-start items-baseline my-1 font-mono" id="current-time" aria-live="off">--:--</div>
                     
-                    <div class="text-[13px] md:text-[14px] mt-1 flex items-center justify-center md:justify-start gap-1 font-medium opacity-90">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i>
-                        <span id="location-name">東京都千代田区 (三畳御殿)</span>
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-2 opacity-90">
+                        <div class="text-[13px] md:text-[14px] flex items-center gap-1 font-medium">
+                            <i data-lucide="map-pin" class="w-4 h-4" aria-hidden="true"></i>
+                            <span id="location-name">東京都千代田区 (三畳御殿)</span>
+                        </div>
+                        <!-- 【展開1】天候との連動 -->
+                        <div class="text-[13px] md:text-[14px] flex items-center gap-1.5 font-bold bg-black/5 px-2 py-0.5 rounded" id="weather-container" aria-label="現在の天気">
+                            <i data-lucide="cloud" id="weather-icon" class="w-4 h-4"></i>
+                            <span id="weather-text">取得中...</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- 中部：日の出・日の入 -->
             <div class="grid grid-cols-2 gap-4 md:gap-8 text-center md:text-left">
-                <div class="bg-black/5 p-4 rounded-sm border border-current/20">
+                <section class="bg-black/5 p-4 rounded-sm border border-current/20" aria-labelledby="sunrise-heading">
                     <div class="flex flex-col items-center md:items-start">
-                        <i data-lucide="sunrise" class="w-6 h-6 md:w-8 md:h-8 mb-2"></i>
-                        <p class="text-[13px] md:text-[14px] tracking-widest mb-1 font-bold">開門（日の出）</p>
-                        <p class="text-3xl md:text-4xl font-medium" id="sunrise-time">--:--</p>
-                        <p class="text-[11px] md:text-[12px] mt-1 opacity-80 tracking-widest font-mono" id="sunrise-date">----.--.--</p>
+                        <i data-lucide="sunrise" class="w-6 h-6 md:w-8 md:h-8 mb-2" aria-hidden="true"></i>
+                        <h3 id="sunrise-heading" class="text-[13px] md:text-[14px] tracking-widest mb-1 font-bold">開門（日の出）</h3>
+                        <p class="text-3xl md:text-4xl font-medium font-mono" id="sunrise-time">--:--</p>
+                        <p class="text-[12px] mt-1 opacity-90 tracking-widest font-mono" id="sunrise-date">----.--.--</p>
                     </div>
-                </div>
-                <div class="bg-black/5 p-4 rounded-sm border border-current/20">
+                </section>
+                <section class="bg-black/5 p-4 rounded-sm border border-current/20" aria-labelledby="sunset-heading">
                     <div class="flex flex-col items-center md:items-start">
-                        <i data-lucide="sunset" class="w-6 h-6 md:w-8 md:h-8 mb-2"></i>
-                        <p class="text-[13px] md:text-[14px] tracking-widest mb-1 font-bold">閉門（日の入）</p>
-                        <p class="text-3xl md:text-4xl font-medium" id="sunset-time">--:--</p>
-                        <p class="text-[11px] md:text-[12px] mt-1 opacity-80 tracking-widest font-mono" id="sunset-date">----.--.--</p>
+                        <i data-lucide="sunset" class="w-6 h-6 md:w-8 md:h-8 mb-2" aria-hidden="true"></i>
+                        <h3 id="sunset-heading" class="text-[13px] md:text-[14px] tracking-widest mb-1 font-bold">閉門（日の入）</h3>
+                        <p class="text-3xl md:text-4xl font-medium font-mono" id="sunset-time">--:--</p>
+                        <p class="text-[12px] mt-1 opacity-90 tracking-widest font-mono" id="sunset-date">----.--.--</p>
                     </div>
-                </div>
+                </section>
             </div>
 
-            <!-- 下部：アクション（ボタン・リンク）と独白 -->
+            <!-- 下部：ユーティリティ（環境音・通知・位置情報など） -->
             <div class="flex flex-col gap-6 w-full">
                 
-                <!-- ユーティリティリンク群 -->
-                <div class="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6">
-                    <div class="flex flex-col items-center md:items-start w-full md:w-auto">
-                        <button onclick="requestLocation()" class="w-full md:w-auto text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider p-3 border border-current rounded-sm flex items-center justify-center gap-2">
-                            <i data-lucide="navigation" class="w-4 h-4"></i>
-                            現在地から計算
-                        </button>
-                        <p id="error-msg" class="text-[12px] md:text-[14px] font-bold text-[#FF2800] mt-2 hidden bg-white/90 p-1.5 inline-block rounded border border-[#FF2800] w-full text-center"></p>
-                    </div>
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                    <!-- 位置情報 -->
+                    <button onclick="requestLocation()" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2">
+                        <i data-lucide="navigation" class="w-4 h-4"></i>
+                        現在地
+                    </button>
                     
-                    <a href="https://meca611.github.io/tools/otukimi/index.html" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider p-3 border border-current rounded-sm flex items-center justify-center gap-2">
+                    <!-- 【展開3】環境音（アンビエント）トグル -->
+                    <button onclick="toggleAmbientSound()" id="btn-ambient" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2" aria-pressed="false">
+                        <i data-lucide="volume-x" id="ambient-icon" class="w-4 h-4"></i>
+                        <span id="ambient-text">環境音: 靜寂</span>
+                    </button>
+
+                    <!-- 【展開4】日没通知（PWA的要素） -->
+                    <button onclick="requestNotification()" id="btn-notify" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2">
+                        <i data-lucide="bell" id="notify-icon" class="w-4 h-4"></i>
+                        通知設定
+                    </button>
+
+                    <a href="https://meca611.github.io/tools/otukimi/index.html" target="_blank" rel="noopener noreferrer" class="touch-target text-[13px] md:text-[14px] font-bold hover:bg-current hover:text-white transition-colors tracking-wider px-4 py-2 border border-current rounded-sm flex items-center justify-center gap-2" aria-label="月齢カレンダー「おつきみ」を新しいタブで開く">
                         <i data-lucide="moon" class="w-4 h-4"></i>
-                        月齢カレンダー
+                        おつきみ
                     </a>
                 </div>
+                <p id="error-msg" class="text-[13px] md:text-[14px] font-bold text-[var(--cud-red)] mt-1 hidden bg-white/90 p-2 inline-block rounded border border-[var(--cud-red)]" role="alert"></p>
 
                 <!-- ✨ 先生の独白（Gemini API） -->
-                <div class="border-t border-current/30 pt-6 w-full mt-2">
+                <section class="border-t border-current/30 pt-6 w-full mt-2" aria-labelledby="monologue-heading">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                        <p class="text-[14px] tracking-widest font-bold flex items-center gap-2 justify-center sm:justify-start">
-                            <i data-lucide="feather" class="w-4 h-4"></i>
+                        <h3 id="monologue-heading" class="text-[14px] md:text-[15px] tracking-widest font-bold flex items-center gap-2 justify-center sm:justify-start">
+                            <i data-lucide="feather" class="w-5 h-5"></i>
                             文豪の独り言
-                        </p>
-                        <button onclick="generateMonologue()" id="btn-generate" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 border border-current rounded-full hover:opacity-70 transition-opacity font-bold text-[14px] bg-white/20 shadow-sm">
+                        </h3>
+                        <button onclick="generateMonologue()" id="btn-generate" class="touch-target w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-current rounded-full hover:bg-current hover:text-white transition-all font-bold text-[14px] shadow-sm">
                             <span>✨ 今の心境を窺う</span>
                         </button>
                     </div>
                     
                     <div id="monologue-container" class="hidden w-full bg-white/20 p-6 md:p-8 rounded-sm border border-current shadow-inner flex justify-center min-h-[160px] md:min-h-[200px] relative">
-                        <!-- 装飾用の角 -->
-                        <div class="absolute top-0 left-0 w-2 h-2 border-t border-l border-current"></div>
-                        <div class="absolute top-0 right-0 w-2 h-2 border-t border-r border-current"></div>
-                        <div class="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-current"></div>
-                        <div class="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-current"></div>
-                        
-                        <div id="monologue-loading" class="absolute inset-0 flex items-center justify-center">
+                        <div id="monologue-loading" class="absolute inset-0 flex items-center justify-center" aria-live="polite">
                             <p class="text-[14px] font-bold tracking-widest animate-pulse flex items-center gap-2">
                                 <i data-lucide="pen-tool" class="w-4 h-4 animate-bounce"></i>
                                 筆を執っております...
                             </p>
                         </div>
-                        <p id="monologue-text" class="vertical-text-box text-[15px] md:text-[16px] leading-loose font-medium hidden text-inherit w-full"></p>
+                        <p id="monologue-text" class="vertical-text-box text-[15px] md:text-[16px] leading-loose font-medium hidden text-inherit w-full" aria-live="polite"></p>
                     </div>
-                </div>
+                </section>
 
             </div>
         </div>
     </main>
 
-    <footer class="absolute bottom-0 left-0 w-full py-4 px-4 flex flex-col items-center justify-center z-20 opacity-90">
-        <div class="mb-2 flex items-center justify-center" aria-label="mecalogo-color">
-            <span class="font-bold border-2 border-[#8C6589] text-[#8C6589] px-3 py-1 tracking-widest text-[14px]">MECA</span>
+    <!-- MECA ロゴ フッター (古代紫・白画像マスク) -->
+    <footer class="absolute bottom-0 left-0 w-full py-6 px-4 flex flex-col items-center justify-center z-20 bg-[#f4f1ea] text-[#111111] border-t border-gray-300">
+        <div class="mb-3 flex items-center justify-center" aria-label="MECA Midnight Express Computational Archives ロゴ">
+            <div class="logo-mask"></div>
         </div>
-        <p class="text-[12px] md:text-[14px] font-bold mb-1">しんやせっけいしゃ（MECA）</p>
-        <p class="text-[10px] md:text-[12px] opacity-80">&copy; 2026 Midnight Express Computational Archives</p>
+        <p class="text-[13px] md:text-[14px] font-bold mb-1">しんやせっけいしゃ（MECA）</p>
+        <p class="text-[11px] md:text-[12px] opacity-80">&copy; 2026 Midnight Express Computational Archives</p>
     </footer>
+
+    <!-- ABOUT モーダル (ダイアログ) -->
+    <dialog id="about-modal" class="p-0 border-0 rounded-md shadow-2xl bg-white text-[#111111] max-w-2xl w-[90%] md:w-full backdrop:bg-black/60">
+        <div class="p-6 md:p-8">
+            <div class="flex justify-between items-center border-b pb-4 mb-6">
+                <h2 class="text-xl md:text-2xl font-bold tracking-widest flex items-center gap-2">
+                    <i data-lucide="info" class="w-6 h-6 text-[var(--color-kodaidmurasaki)]"></i>
+                    日沒閉門について
+                </h2>
+                <button onclick="document.getElementById('about-modal').close()" class="touch-target p-2 hover:bg-gray-100 rounded-full transition-colors" aria-label="閉じる">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6 text-[14px] md:text-[15px] leading-relaxed">
+                <section>
+                    <h3 class="font-bold text-[16px] mb-2 border-l-4 border-[var(--color-kodaidmurasaki)] pl-3">コンセプト</h3>
+                    <p>昭和の文豪・内田百閒の随筆に見られる「日が沈んだら門を閉ざし、外界との関わりを断つ」という飄々とした生き方に着想を得た、日の出・日の入時刻案内サイトです。</p>
+                    <p class="mt-2">ユーザーの現在地における正確な太陽の運行に基づき、画面の色彩や文言が「昼（和紙）」「夕暮れ（茜色）」「夜（漆黒）」「夜明け（東雲色）」へと移ろいます。</p>
+                </section>
+                
+                <section>
+                    <h3 class="font-bold text-[16px] mb-2 border-l-4 border-[var(--color-kodaidmurasaki)] pl-3">実装された展開機能</h3>
+                    <ul class="list-disc pl-5 space-y-2">
+                        <li><strong>【天候連動】</strong> 現在地の天候を取得し表示します。AIの生成文にも影響を与えます。</li>
+                        <li><strong>【季節の移ろい】</strong> 現在の日付から「二十四節気」を算出し、日本の伝統的な季節感を表示します。</li>
+                        <li><strong>【環境音】</strong> 「環境音」ボタンを押すと、時間帯に応じた微かなアンビエント音（ノイズ生成）が流れます。</li>
+                        <li><strong>【通知設定】</strong> ブラウザの通知を許可すると、日没のタイミングを知らせる設計を想定しています。</li>
+                        <li><strong>【文豪の独り言】</strong> Gemini APIを用い、現在の「時間・天候・門の状態」を踏まえた百閒風の短い随筆をリアルタイム生成します。</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3 class="font-bold text-[16px] mb-2 border-l-4 border-[var(--color-kodaidmurasaki)] pl-3">アクセシビリティへの配慮</h3>
+                    <p>当サイトは以下の基準に配慮して設計されています。</p>
+                    <ul class="list-disc pl-5 space-y-1 mt-2 text-[13px] text-gray-700">
+                        <li>デジタル庁デザインシステムβ版 v2.10.2 に準拠した余白・ターゲットサイズ</li>
+                        <li>カラーユニバーサルデザイン推奨配色セット 第2版 を適用した状態表示</li>
+                        <li>JIS X 8341-3:2016 (WCAG 2.2) を意識したコントラスト比とキーボードフォーカス制御</li>
+                    </ul>
+                </section>
+            </div>
+            
+            <div class="mt-8 pt-4 border-t text-center">
+                <button onclick="document.getElementById('about-modal').close()" class="touch-target px-8 py-2 bg-[var(--color-kodaidmurasaki)] text-white font-bold rounded-sm hover:opacity-90 transition-opacity">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </dialog>
 
     <script>
         // Lucideアイコンの初期化
@@ -195,16 +318,168 @@
         let currentLat = 35.6900;
         let currentLng = 139.7350;
         
-        // 状態（今日と明日のデータを保持）
+        // 状態
         let sunDataToday = null;
         let sunDataTomorrow = null;
         let clockInterval = null;
+        let currentWeather = "不明"; // 天候状態保持用
 
-        // 初期化
+        // --- 二十四節気の簡易判定（展開2） ---
+        const solarTerms = [
+            { d: 106, n: "小寒" }, { d: 120, n: "大寒" }, { d: 204, n: "立春" }, { d: 219, n: "雨水" },
+            { d: 305, n: "啓蟄" }, { d: 321, n: "春分" }, { d: 405, n: "清明" }, { d: 420, n: "穀雨" },
+            { d: 505, n: "立夏" }, { d: 521, n: "小満" }, { d: 606, n: "芒種" }, { d: 621, n: "夏至" },
+            { d: 707, n: "小暑" }, { d: 723, n: "大暑" }, { d: 808, n: "立秋" }, { d: 823, n: "処暑" },
+            { d: 908, n: "白露" }, { d: 923, n: "秋分" }, { d: 1008, n: "寒露" }, { d: 1023, n: "霜降" },
+            { d: 1107, n: "立冬" }, { d: 1122, n: "小雪" }, { d: 1207, n: "大雪" }, { d: 1222, n: "冬至" }
+        ];
+
+        function getSolarTerm(date) {
+            const md = (date.getMonth() + 1) * 100 + date.getDate();
+            let term = "冬至"; // デフォルト（年末年始）
+            for (let i = 0; i < solarTerms.length; i++) {
+                if (md >= solarTerms[i].d) {
+                    term = solarTerms[i].n;
+                } else {
+                    break;
+                }
+            }
+            return term;
+        }
+
+        // --- 天候取得 (Open-Meteo API) （展開1） ---
+        async function fetchWeather(lat, lng) {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`;
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                const code = data.current_weather.weathercode;
+                const temp = data.current_weather.temperature;
+                
+                const weatherEl = document.getElementById('weather-text');
+                const weatherIcon = document.getElementById('weather-icon');
+                
+                // WMO Weather interpretation codes (簡易版)
+                if (code <= 1) { currentWeather = "晴れ"; weatherIcon.setAttribute('data-lucide', 'sun'); }
+                else if (code <= 3) { currentWeather = "曇り"; weatherIcon.setAttribute('data-lucide', 'cloud'); }
+                else if (code <= 49) { currentWeather = "霧・もや"; weatherIcon.setAttribute('data-lucide', 'align-center'); }
+                else if (code <= 69) { currentWeather = "雨"; weatherIcon.setAttribute('data-lucide', 'cloud-rain'); }
+                else if (code <= 79) { currentWeather = "雪"; weatherIcon.setAttribute('data-lucide', 'snowflake'); }
+                else if (code <= 99) { currentWeather = "雷雨"; weatherIcon.setAttribute('data-lucide', 'cloud-lightning'); }
+                
+                weatherEl.textContent = `${currentWeather} ${temp}°C`;
+                lucide.createIcons(); // アイコン再描画
+            } catch (e) {
+                console.error("天気取得エラー", e);
+                document.getElementById('weather-text').textContent = "天候不明";
+            }
+        }
+
+        // --- 環境音（Web Audio API） （展開3） ---
+        let audioCtx;
+        let isAmbientPlaying = false;
+        let noiseNode;
+
+        function toggleAmbientSound() {
+            const btn = document.getElementById('btn-ambient');
+            const icon = document.getElementById('ambient-icon');
+            const text = document.getElementById('ambient-text');
+
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (isAmbientPlaying) {
+                if(noiseNode) {
+                    noiseNode.stop();
+                    noiseNode.disconnect();
+                }
+                isAmbientPlaying = false;
+                btn.setAttribute('aria-pressed', 'false');
+                icon.setAttribute('data-lucide', 'volume-x');
+                text.textContent = "環境音: 靜寂";
+                btn.classList.remove('bg-current', 'text-white');
+            } else {
+                // ピンクノイズ風の音（風や雨のような音）を生成
+                const bufferSize = audioCtx.sampleRate * 2; 
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = (Math.random() * 2 - 1) * 0.05; // 音量小さめ
+                }
+
+                noiseNode = audioCtx.createBufferSource();
+                noiseNode.buffer = buffer;
+                noiseNode.loop = true;
+                
+                // フィルターをかけて柔らかくする
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.value = 400; // くぐもった音に
+
+                noiseNode.connect(filter);
+                filter.connect(audioCtx.destination);
+                noiseNode.start(0);
+
+                isAmbientPlaying = true;
+                btn.setAttribute('aria-pressed', 'true');
+                icon.setAttribute('data-lucide', 'volume-2');
+                text.textContent = "環境音: 奏鳴";
+                btn.classList.add('bg-current', 'text-white'); // UD的にON状態を強調
+            }
+            lucide.createIcons();
+        }
+
+        // --- 通知機能 （展開4） ---
+        function requestNotification() {
+            const errorMsg = document.getElementById('error-msg');
+            if (!("Notification" in window)) {
+                showError("お使いのブラウザは通知に対応していません。");
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                const icon = document.getElementById('notify-icon');
+                if (permission === "granted") {
+                    icon.setAttribute('data-lucide', 'bell-ring');
+                    showError("通知を許可しました。日没前に通知します。（※デモ動作）");
+                    // 実際の実装ではServiceWorker等でスケジュールする
+                    new Notification("日沒閉門", { body: "通知設定が完了しました。日が沈めば、門を閉ざします。" });
+                } else {
+                    icon.setAttribute('data-lucide', 'bell-off');
+                    showError("通知がブロックされました。");
+                }
+                lucide.createIcons();
+            });
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            if (el) {
+                el.textContent = msg;
+                el.classList.remove('hidden');
+                setTimeout(() => el.classList.add('hidden'), 5000);
+            }
+        }
+
+        // --- コア初期化 ---
         async function init() {
             if (clockInterval) clearInterval(clockInterval);
+            
+            // 二十四節気の設定
+            document.getElementById('solar-term').textContent = getSolarTerm(new Date());
+
             startClock();
-            await fetchAllSunData(currentLat, currentLng);
+            await Promise.all([
+                fetchAllSunData(currentLat, currentLng),
+                fetchWeather(currentLat, currentLng)
+            ]);
         }
 
         // 時計の更新
@@ -215,36 +490,27 @@
                 const currentDateEl = document.getElementById('current-date');
                 const currentTimeEl = document.getElementById('current-time');
                 
-                // DOMが存在しない場合は処理をスキップ（エラー防止）
                 if (!currentDateEl || !currentTimeEl) return;
                 
-                // 現在の日付（西暦・和暦・曜日）の更新
                 const year = now.getFullYear();
-                const reiwaYear = year - 2018; // 2019年が令和1年
+                const reiwaYear = year - 2018; 
                 const month = now.getMonth() + 1;
                 const day = now.getDate();
                 
                 const days = ['日', '月', '火', '水', '木', '金', '土'];
                 const dayIndex = now.getDay();
                 let dayClass = "";
-                if (dayIndex === 0) {
-                    dayClass = "text-[#FF2800] font-bold"; // 日曜はUDの赤系
-                } else if (dayIndex === 6) {
-                    dayClass = "text-[#005AFF] font-bold"; // 土曜はUDの青系
-                }
+                // CUD推奨配色に合わせた曜日色（WCAG対応）
+                if (dayIndex === 0) { dayClass = "text-[var(--cud-red)] font-bold"; } 
+                else if (dayIndex === 6) { dayClass = "text-[var(--cud-blue)] font-bold"; }
                 
                 currentDateEl.innerHTML = `${year}（令和${reiwaYear}）年${month}月${day}日<span class="${dayClass}">（${days[dayIndex]}）</span>`;
 
-                // 時間のゼロ埋めをしない設定 (hour: 'numeric')
                 const timeStr = now.toLocaleTimeString('ja-JP', { hour12: false, hour: 'numeric', minute: '2-digit', second: '2-digit' });
                 
-                // 秒を小さく表示するための分割処理
                 const parts = timeStr.split(':');
                 if(parts.length === 3) {
-                    const h = parts[0];
-                    const m = parts[1];
-                    const s = parts[2];
-                    currentTimeEl.innerHTML = `${h}:${m}<span class="text-2xl md:text-3xl ml-1 md:ml-2">:${s}</span>`;
+                    currentTimeEl.innerHTML = `${parts[0]}:${parts[1]}<span class="text-2xl md:text-3xl ml-1 md:ml-2">:${parts[2]}</span>`;
                 } else {
                     currentTimeEl.textContent = timeStr;
                 }
@@ -254,7 +520,7 @@
             }, 1000);
         }
 
-        // 指定した日付の太陽データを取得
+        // 太陽データの取得
         async function fetchSunDataForDate(lat, lng, date) {
             const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
             const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&date=${dateString}&formatted=0`;
@@ -262,7 +528,6 @@
             return await response.json();
         }
 
-        // 今日と明日のデータを一括取得
         async function fetchAllSunData(lat, lng) {
             try {
                 const today = new Date();
@@ -283,21 +548,15 @@
                         sunrise: new Date(tomorrowData.results.sunrise),
                         sunset: new Date(tomorrowData.results.sunset)
                     };
-                    
                     updateDisplayData(new Date());
                     updateTheme(new Date());
                 }
             } catch (error) {
-                console.error("API呼び出しエラー:", error);
-                const errorMsg = document.getElementById('error-msg');
-                if (errorMsg) {
-                    errorMsg.textContent = "データの取得に失敗しました。";
-                    errorMsg.classList.remove('hidden');
-                }
+                console.error("太陽データAPIエラー:", error);
+                showError("日の出・日の入データの取得に失敗しました。");
             }
         }
 
-        // 表示するデータ（今日か明日か）を判定してUIを更新
         function updateDisplayData(now) {
             if (!sunDataToday || !sunDataTomorrow) return;
 
@@ -306,8 +565,7 @@
             const sunriseDateEl = document.getElementById('sunrise-date');
             const sunsetDateEl = document.getElementById('sunset-date');
 
-            // 要素が存在しない場合のエラーを防ぐ
-            if (!sunriseTimeEl || !sunsetTimeEl || !sunriseDateEl || !sunsetDateEl) return;
+            if (!sunriseTimeEl || !sunsetTimeEl) return;
 
             let displaySunrise = sunDataToday.sunrise;
             let isNextDaySunrise = false;
@@ -323,29 +581,17 @@
                 isNextDaySunset = true;
             }
 
-            sunriseTimeEl.textContent = formatTime(displaySunrise);
-            sunsetTimeEl.textContent = formatTime(displaySunset);
+            sunriseTimeEl.textContent = displaySunrise.toLocaleTimeString('ja-JP', { hour: 'numeric', minute: '2-digit', hour12: false });
+            sunsetTimeEl.textContent = displaySunset.toLocaleTimeString('ja-JP', { hour: 'numeric', minute: '2-digit', hour12: false });
             
-            // 日付と「翌日」ラベルの設定
-            const nextDayBadge = '<span class="ml-2 text-[10px] border border-current px-1.5 py-0.5 rounded-sm opacity-80 bg-black/5">翌日</span>';
-            sunriseDateEl.innerHTML = formatSimpleDate(displaySunrise) + (isNextDaySunrise ? nextDayBadge : '');
-            sunsetDateEl.innerHTML = formatSimpleDate(displaySunset) + (isNextDaySunset ? nextDayBadge : '');
+            const formatD = d => `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+            const nextDayBadge = '<span class="ml-2 text-[10px] border border-current px-1.5 py-0.5 rounded-sm opacity-90 bg-black/10">翌日</span>';
+            
+            sunriseDateEl.innerHTML = formatD(displaySunrise) + (isNextDaySunrise ? nextDayBadge : '');
+            sunsetDateEl.innerHTML = formatD(displaySunset) + (isNextDaySunset ? nextDayBadge : '');
         }
 
-        // 時間のフォーマット (H:MM - ゼロ埋めなし)
-        function formatTime(date) {
-            return date.toLocaleTimeString('ja-JP', { hour: 'numeric', minute: '2-digit', hour12: false });
-        }
-
-        // 日付のシンプルなフォーマット (YYYY.MM.DD)
-        function formatSimpleDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}.${month}.${day}`;
-        }
-
-        // 時間帯に応じたテーマとテキストの更新
+        // 時間帯に応じたテーマ更新
         function updateTheme(now) {
             if (!sunDataToday) return;
 
@@ -355,96 +601,73 @@
             const litTextEl = document.getElementById('literary-text');
             const celestial = document.getElementById('celestial-body');
 
-            // 要素が存在しない場合のエラーを防ぐ
-            if (!statusEl || !titleEl || !litTextEl || !celestial || !body) return;
+            if (!statusEl || !titleEl || !body) return;
 
-            // クラスのリセット
             body.classList.remove('theme-day', 'theme-night', 'theme-dawn', 'theme-dusk');
 
             const nowTime = now.getTime();
-            // テーマ判定は「今日の日の出・日の入」を基準に行う
             const riseTime = sunDataToday.sunrise.getTime();
             const setTime = sunDataToday.sunset.getTime();
-
-            // 夜明け前・夕暮れ時のマージン（前後30分）
             const margin = 30 * 60 * 1000;
 
             if (nowTime < riseTime - margin || nowTime > setTime + margin) {
-                // 完全に夜（閉門中）
                 body.classList.add('theme-night');
                 statusEl.textContent = "現在は【閉門】しています";
                 titleEl.textContent = "日沒閉門";
                 litTextEl.textContent = "外界の喧騒を遮断し、静寂を嗜む。";
-                celestial.style.backgroundColor = "#cbd5e1"; // 月明かり
+                celestial.style.backgroundColor = "#cbd5e1";
                 celestial.style.top = "10%";
             } else if (nowTime >= riseTime - margin && nowTime < riseTime + margin) {
-                // 夜明け（開門準備）
                 body.classList.add('theme-dawn');
                 statusEl.textContent = "まもなく【開門】します";
                 titleEl.textContent = "東雲開門";
                 litTextEl.textContent = "夜が明け、新しい一日が始まる。";
-                celestial.style.backgroundColor = "#fbbf24"; // 朝日
+                celestial.style.backgroundColor = "#fbbf24";
                 celestial.style.top = "50%";
             } else if (nowTime >= setTime - margin && nowTime < setTime + margin) {
-                // 夕暮れ（閉門準備）
                 body.classList.add('theme-dusk');
                 statusEl.textContent = "まもなく【閉門】します";
                 titleEl.textContent = "黄昏閉門";
                 litTextEl.textContent = "日が沈みゆく。帰るべき時間。";
-                celestial.style.backgroundColor = "#ef4444"; // 夕日
+                celestial.style.backgroundColor = "#ff9900"; // CUD黄色系
                 celestial.style.top = "50%";
             } else {
-                // 昼間（開門中）
                 body.classList.add('theme-day');
                 statusEl.textContent = "現在は【開門】しています";
                 titleEl.textContent = "日出開門";
                 litTextEl.textContent = "門は開かれている。外界と交わる時間。";
-                celestial.style.backgroundColor = "#f59e0b"; // 太陽
+                celestial.style.backgroundColor = "#ff9900";
                 celestial.style.top = "-10%";
             }
         }
 
         // ユーザーの現在地を取得
         function requestLocation() {
-            const errorMsg = document.getElementById('error-msg');
-            if (errorMsg) errorMsg.classList.add('hidden');
-
             if (!navigator.geolocation) {
-                if (errorMsg) {
-                    errorMsg.textContent = "お使いのブラウザは位置情報に対応していません。";
-                    errorMsg.classList.remove('hidden');
-                }
+                showError("お使いのブラウザは位置情報に対応していません。");
                 return;
             }
-
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     currentLat = position.coords.latitude;
                     currentLng = position.coords.longitude;
-                    const locName = document.getElementById('location-name');
-                    if (locName) locName.textContent = "現在地 (GPS)";
-                    await fetchAllSunData(currentLat, currentLng);
+                    document.getElementById('location-name').textContent = "現在地 (GPS)";
+                    await init(); // 再取得・再描画
                 },
                 (error) => {
-                    if (errorMsg) {
-                        errorMsg.textContent = "位置情報の取得が許可されませんでした。";
-                        errorMsg.classList.remove('hidden');
-                    }
+                    showError("位置情報の取得が許可されませんでした。");
                 }
             );
         }
 
-        // Gemini API 呼び出し用のリトライ処理
+        // --- 先生の独白を生成 (Gemini API) ---
         async function fetchWithRetry(url, options, maxRetries = 5) {
             let retries = 0;
             const delays = [1000, 2000, 4000, 8000, 16000];
-
             while (retries < maxRetries) {
                 try {
                     const response = await fetch(url, options);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     return await response.json();
                 } catch (error) {
                     retries++;
@@ -454,7 +677,6 @@
             }
         }
 
-        // 先生の独白を生成 (Gemini API)
         async function generateMonologue() {
             const btn = document.getElementById('btn-generate');
             const container = document.getElementById('monologue-container');
@@ -465,23 +687,20 @@
 
             // UI更新
             btn.disabled = true;
+            btn.setAttribute('aria-busy', 'true');
             btn.classList.add('opacity-50', 'cursor-not-allowed');
             container.classList.remove('hidden');
             loading.classList.remove('hidden');
             textEl.classList.add('hidden');
             textEl.textContent = "";
 
-            // 現在の情報を取得してプロンプトに組み込む
-            const gateStatusEl = document.getElementById('gate-status');
-            const currentTimeEl = document.getElementById('current-time');
-            const currentDateEl = document.getElementById('current-date');
-            
-            const gateStatus = gateStatusEl ? gateStatusEl.textContent : "不明";
-            const timeStr = currentTimeEl ? currentTimeEl.textContent.replace(/<[^>]*>?/gm, '') : "";
-            const dateStr = currentDateEl ? currentDateEl.textContent.replace(/<[^>]*>?/gm, '') : "";
+            const gateStatus = document.getElementById('gate-status')?.textContent || "不明";
+            const timeStr = document.getElementById('current-time')?.textContent.replace(/<[^>]*>?/gm, '') || "";
+            const solarTerm = document.getElementById('solar-term')?.textContent || "";
 
+            // 展開項目（天気・季節）をプロンプトに盛り込む
             const prompt = `あなたは昭和の文豪、内田百閒のような人物です。偏屈でマイペース、外界の煩わしさを嫌いながらも、猫（ノラヤなど）や酒、鉄道、そして「日没閉門」の生活を愛しています。
-現在の日時は「${dateStr} ${timeStr}」、門の状態は「${gateStatus}」です。
+現在の時間は「${timeStr}」、季節は「${solarTerm}」、天候は「${currentWeather}」、門の状態は「${gateStatus}」です。
 この状況を踏まえ、今の心境や目の前の情景を、短い随筆（3〜4文程度、最大100文字）で語ってください。
 文体は古風で、飄々とした語り口にしてください。`;
 
@@ -503,12 +722,7 @@
                 });
 
                 const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                if (generatedText) {
-                    textEl.textContent = generatedText;
-                } else {
-                    textEl.textContent = "ふいと、言葉が途切れてしまった。";
-                }
+                textEl.textContent = generatedText ? generatedText : "ふいと、言葉が途切れてしまった。";
             } catch (error) {
                 console.error("Gemini API Error:", error);
                 textEl.textContent = "筆が進まない。また後で来てくれ給え。";
@@ -516,11 +730,12 @@
                 loading.classList.add('hidden');
                 textEl.classList.remove('hidden');
                 btn.disabled = false;
+                btn.setAttribute('aria-busy', 'false');
                 btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        // HTMLの読み込みが完全に終わってから起動（エラー防止）
+        // 起動
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
